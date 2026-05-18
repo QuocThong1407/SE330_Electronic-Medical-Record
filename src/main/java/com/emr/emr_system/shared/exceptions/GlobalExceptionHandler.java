@@ -4,10 +4,13 @@ import com.emr.emr_system.shared.dto.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import com.emr.emr_system.shared.exceptions.AuthenticationFailedException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -37,6 +40,28 @@ public class GlobalExceptionHandler {
         
         ApiResponse<Object> response = ApiResponse.error(ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
+    /**
+     * Handle authentication failure error (401 Unauthorized)
+     */
+    @ExceptionHandler({AuthenticationFailedException.class, BadCredentialsException.class})
+    public ResponseEntity<ApiResponse<Object>> handleAuthenticationFailure(RuntimeException ex) {
+        log.error("Authentication failed: {}", ex.getMessage());
+
+        ApiResponse<Object> response = ApiResponse.error(ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
+    /**
+     * Handle access denied error (403 Forbidden)
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<Object>> handleAccessDeniedException(AccessDeniedException ex) {
+        log.error("Access denied: {}", ex.getMessage());
+
+        ApiResponse<Object> response = ApiResponse.error("You do not have permission to access this resource.");
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 
     /**
