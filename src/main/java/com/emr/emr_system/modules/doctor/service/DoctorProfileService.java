@@ -15,6 +15,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
+import java.time.LocalDate;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -22,6 +25,7 @@ public class DoctorProfileService {
 
     private final DoctorProfileRepository doctorProfileRepository;
     private final UserRepository userRepository;
+    private final SecureRandom secureRandom = new SecureRandom();
 
     public DoctorProfileResponse createMyProfile(UserPrincipal principal, DoctorProfileRequest request) {
         User user = loadCurrentUser(principal);
@@ -33,11 +37,14 @@ public class DoctorProfileService {
 
         DoctorProfile profile = DoctorProfile.builder()
                 .user(user)
+                .departmentId(request.getDepartmentId())
+                .employeeCode(generateUniqueEmployeeCode())
                 .fullName(request.getFullName())
                 .gender(request.getGender())
                 .phone(request.getPhone())
                 .emailContact(request.getEmailContact())
-                .specialization(request.getSpecialization())
+                .degree(request.getDegree())
+                .experienceYears(request.getExperienceYears())
                 .dateOfBirth(request.getDateOfBirth())
                 .build();
 
@@ -51,11 +58,13 @@ public class DoctorProfileService {
         DoctorProfile profile = doctorProfileRepository.findByUser_Id(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor profile", "userId", user.getId()));
 
+        profile.setDepartmentId(request.getDepartmentId());
         profile.setFullName(request.getFullName());
         profile.setGender(request.getGender());
         profile.setPhone(request.getPhone());
         profile.setEmailContact(request.getEmailContact());
-        profile.setSpecialization(request.getSpecialization());
+        profile.setDegree(request.getDegree());
+        profile.setExperienceYears(request.getExperienceYears());
         profile.setDateOfBirth(request.getDateOfBirth());
 
         return DoctorProfileResponse.from(doctorProfileRepository.save(profile));
@@ -79,5 +88,13 @@ public class DoctorProfileService {
         if (roleName != RoleName.DOCTOR && roleName != RoleName.ADMIN) {
             throw new AccessDeniedException("Only DOCTOR or ADMIN users can create doctor profiles");
         }
+    }
+
+    private String generateUniqueEmployeeCode() {
+        String code;
+        do {
+            code = "DOC-" + LocalDate.now().getYear() + "-" + (1000 + secureRandom.nextInt(9000));
+        } while (doctorProfileRepository.existsByEmployeeCode(code));
+        return code;
     }
 }

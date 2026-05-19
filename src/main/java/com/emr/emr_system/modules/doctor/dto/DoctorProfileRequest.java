@@ -1,9 +1,13 @@
 package com.emr.emr_system.modules.doctor.dto;
 
+import com.emr.emr_system.shared.enums.Gender;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Min;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 public class DoctorProfileRequest {
@@ -11,11 +15,18 @@ public class DoctorProfileRequest {
     @NotBlank(message = "Full name is required")
     private String fullName;
 
-    @NotBlank(message = "Gender is required")
-    private String gender;
+    @NotNull(message = "Gender is required")
+    private Gender gender;
+
+    private UUID departmentId;
 
     private String phone;
     private String emailContact;
-    private String specialization;
+    private String degree;
+
+    @NotNull(message = "Experience years is required")
+    @Min(value = 0, message = "Experience years must be greater than or equal to 0")
+    private Integer experienceYears;
+
     private LocalDate dateOfBirth;
 }
