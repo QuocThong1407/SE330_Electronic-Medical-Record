@@ -5,6 +5,7 @@ import com.emr.emr_system.modules.auth.dto.LoginRequest;
 import com.emr.emr_system.modules.auth.dto.RegisterRequest;
 import com.emr.emr_system.modules.auth.dto.UserResponse;
 import com.emr.emr_system.modules.auth.entity.Role;
+import com.emr.emr_system.modules.auth.entity.RoleName;
 import com.emr.emr_system.modules.auth.entity.User;
 import com.emr.emr_system.modules.auth.repository.RoleRepository;
 import com.emr.emr_system.modules.auth.repository.UserRepository;
@@ -35,8 +36,8 @@ public class AuthService {
             throw new DuplicateResourceException("User", "email", email);
         }
 
-        Role role = roleRepository.findByName(request.getRole())
-                .orElseThrow(() -> new ResourceNotFoundException("Role", "name", request.getRole().name()));
+        Role role = roleRepository.findByName(RoleName.PATIENT)
+                .orElseThrow(() -> new ResourceNotFoundException("Role", "name", RoleName.PATIENT.name()));
 
         User user = User.builder()
                 .email(email)
