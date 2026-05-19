@@ -16,6 +16,7 @@ public class UserResponse {
     private RoleName role;
     private boolean active;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public static UserResponse from(User user) {
         return UserResponse.builder()
@@ -24,6 +25,7 @@ public class UserResponse {
                 .role(user.getRole().getName())
                 .active(Boolean.TRUE.equals(user.getActive()))
                 .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
                 .build();
     }
 }
