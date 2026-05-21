@@ -43,6 +43,17 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handle bad request error (400 Bad Request)
+     */
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ApiResponse<Object>> handleBadRequestException(BadRequestException ex) {
+        log.error("Bad request: {}", ex.getMessage());
+
+        ApiResponse<Object> response = ApiResponse.error(ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
      * Handle authentication failure error (401 Unauthorized)
      */
     @ExceptionHandler({AuthenticationFailedException.class, BadCredentialsException.class})

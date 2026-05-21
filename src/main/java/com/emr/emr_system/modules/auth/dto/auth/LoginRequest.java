@@ -1,4 +1,4 @@
-package com.emr.emr_system.modules.auth.dto;
+package com.emr.emr_system.modules.auth.dto.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
