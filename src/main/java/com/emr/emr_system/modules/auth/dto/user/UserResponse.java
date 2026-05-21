@@ -1,4 +1,4 @@
-package com.emr.emr_system.modules.auth.dto;
+package com.emr.emr_system.modules.auth.dto.user;
 
 import com.emr.emr_system.modules.auth.entity.RoleName;
 import com.emr.emr_system.modules.auth.entity.User;

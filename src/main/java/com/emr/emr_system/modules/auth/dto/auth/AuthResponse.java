@@ -1,4 +1,6 @@
-package com.emr.emr_system.modules.auth.dto;
+package com.emr.emr_system.modules.auth.dto.auth;
+
+import com.emr.emr_system.modules.auth.dto.user.UserResponse;
 
 import lombok.Builder;
 import lombok.Data;

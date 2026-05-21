@@ -1,9 +1,9 @@
-package com.emr.emr_system.modules.auth.service;
+package com.emr.emr_system.modules.auth.service.auth;
 
-import com.emr.emr_system.modules.auth.dto.AuthResponse;
-import com.emr.emr_system.modules.auth.dto.LoginRequest;
-import com.emr.emr_system.modules.auth.dto.RegisterRequest;
-import com.emr.emr_system.modules.auth.dto.UserResponse;
+import com.emr.emr_system.modules.auth.dto.auth.AuthResponse;
+import com.emr.emr_system.modules.auth.dto.auth.LoginRequest;
+import com.emr.emr_system.modules.auth.dto.auth.RegisterRequest;
+import com.emr.emr_system.modules.auth.dto.user.UserResponse;
 import com.emr.emr_system.modules.auth.entity.Role;
 import com.emr.emr_system.modules.auth.entity.RoleName;
 import com.emr.emr_system.modules.auth.entity.User;

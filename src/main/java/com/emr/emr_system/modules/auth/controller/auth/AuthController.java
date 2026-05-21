@@ -1,11 +1,11 @@
-package com.emr.emr_system.modules.auth.controller;
+package com.emr.emr_system.modules.auth.controller.auth;
 
-import com.emr.emr_system.modules.auth.dto.AuthResponse;
-import com.emr.emr_system.modules.auth.dto.LoginRequest;
-import com.emr.emr_system.modules.auth.dto.RegisterRequest;
-import com.emr.emr_system.modules.auth.dto.UserResponse;
+import com.emr.emr_system.modules.auth.dto.auth.AuthResponse;
+import com.emr.emr_system.modules.auth.dto.auth.LoginRequest;
+import com.emr.emr_system.modules.auth.dto.auth.RegisterRequest;
+import com.emr.emr_system.modules.auth.dto.user.UserResponse;
 import com.emr.emr_system.modules.auth.security.UserPrincipal;
-import com.emr.emr_system.modules.auth.service.AuthService;
+import com.emr.emr_system.modules.auth.service.auth.AuthService;
 import com.emr.emr_system.shared.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
