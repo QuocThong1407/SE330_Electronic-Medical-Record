@@ -7,14 +7,15 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class VitalSignsResponse {
-    private Long id;
-    private Long medicalRecordId;
+    private UUID id;
+    private UUID medicalRecordId;
     private BigDecimal temperature;
     private Integer heartRate;
     private Integer bloodPressure;

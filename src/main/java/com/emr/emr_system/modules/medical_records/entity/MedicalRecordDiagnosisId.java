@@ -6,12 +6,13 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class MedicalRecordDiagnosisId implements Serializable {
-    private Long medicalRecordId;
+    private UUID medicalRecordId;
     private String icdCodeId;
 
     @Override

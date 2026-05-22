@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/medical-records")
@@ -32,11 +34,12 @@ public class MedicalRecordsController {
     private final MedicalRecordService medicalRecordService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     public ResponseEntity<ApiResponse<Page<MedicalRecordResponse>>> getMedicalRecords(
             @RequestParam int page,
             @RequestParam int size,
-            @RequestParam(required = false) Long patientId,
-            @RequestParam(required = false) Long doctorId,
+            @RequestParam(required = false) UUID patientId,
+            @RequestParam(required = false) UUID doctorId,
             @RequestParam(required = false) RecordStatus status,
             @RequestParam(required = false) LocalDate fromDate,
             @RequestParam(required = false) LocalDate toDate) {
@@ -47,12 +50,14 @@ public class MedicalRecordsController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<MedicalRecordResponse>> getMedicalRecordById(@PathVariable Long id) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'PATIENT')")
+    public ResponseEntity<ApiResponse<MedicalRecordResponse>> getMedicalRecordById(@PathVariable UUID id) {
         MedicalRecordResponse result = medicalRecordService.getMedicalRecordById(id);
         return ResponseEntity.ok(ApiResponse.success(result, "Medical record retrieved"));
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     public ResponseEntity<ApiResponse<MedicalRecordResponse>> createMedicalRecord(
             @RequestBody MedicalRecordCreateRequest request) {
         MedicalRecordResponse result = medicalRecordService.createMedicalRecord(request);
@@ -60,34 +65,39 @@ public class MedicalRecordsController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     public ResponseEntity<ApiResponse<MedicalRecordResponse>> updateMedicalRecord(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestBody MedicalRecordUpdateRequest request) {
         MedicalRecordResponse result = medicalRecordService.updateMedicalRecord(id, request);
         return ResponseEntity.ok(ApiResponse.success(result, "Medical record updated"));
     }
 
     @PatchMapping("/{id}/complete")
-    public ResponseEntity<ApiResponse<MedicalRecordResponse>> completeMedicalRecord(@PathVariable Long id) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
+    public ResponseEntity<ApiResponse<MedicalRecordResponse>> completeMedicalRecord(@PathVariable UUID id) {
         MedicalRecordResponse result = medicalRecordService.completeMedicalRecord(id);
         return ResponseEntity.ok(ApiResponse.success(result, "Medical record completed"));
     }
 
     @PatchMapping("/{id}/archive")
-    public ResponseEntity<ApiResponse<MedicalRecordResponse>> archiveMedicalRecord(@PathVariable Long id) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<MedicalRecordResponse>> archiveMedicalRecord(@PathVariable UUID id) {
         MedicalRecordResponse result = medicalRecordService.archiveMedicalRecord(id);
         return ResponseEntity.ok(ApiResponse.success(result, "Medical record archived"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteMedicalRecord(@PathVariable Long id) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> deleteMedicalRecord(@PathVariable UUID id) {
         medicalRecordService.deleteMedicalRecord(id);
         return ResponseEntity.ok(ApiResponse.success(null, "Medical record deleted"));
     }
 
     @PatchMapping("/{id}/confidential")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     public ResponseEntity<ApiResponse<MedicalRecordResponse>> setConfidential(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestBody MedicalRecordConfidentialRequest request) {
         MedicalRecordResponse result = medicalRecordService.setConfidential(id, request);
         return ResponseEntity.ok(ApiResponse.success(result, "Medical record confidentiality updated"));

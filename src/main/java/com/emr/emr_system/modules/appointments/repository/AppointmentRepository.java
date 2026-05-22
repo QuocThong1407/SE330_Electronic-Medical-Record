@@ -11,8 +11,9 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
-public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
+public interface AppointmentRepository extends JpaRepository<Appointment, UUID> {
 		@Query("""
 				SELECT a
 				FROM Appointment a
@@ -21,8 +22,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 					AND (:status IS NULL OR a.status = :status)
 					AND (:startTime IS NULL OR :endTime IS NULL OR a.appointmentTime BETWEEN :startTime AND :endTime)
 				""")
-		Page<Appointment> searchAppointments(   @Param("doctorId") Long doctorId,
-									            @Param("patientId") Long patientId,
+		Page<Appointment> searchAppointments(   @Param("doctorId") UUID doctorId,
+								            @Param("patientId") UUID patientId,
 												@Param("status") AppointmentStatus status,
 												@Param("startTime") LocalDateTime startTime,
 												@Param("endTime") LocalDateTime endTime,

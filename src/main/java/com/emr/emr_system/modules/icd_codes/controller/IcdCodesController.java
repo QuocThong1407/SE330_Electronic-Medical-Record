@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,7 @@ public class IcdCodesController {
     private final IcdCodeService icdCodeService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     public ResponseEntity<ApiResponse<Page<IcdCodeResponse>>> searchIcdCodes(
             @RequestParam int page,
             @RequestParam int size,
@@ -35,12 +37,14 @@ public class IcdCodesController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     public ResponseEntity<ApiResponse<IcdCodeResponse>> getIcdCodeById(@PathVariable String id) {
         IcdCodeResponse result = icdCodeService.getIcdCodeById(id);
         return ResponseEntity.ok(ApiResponse.success(result, "ICD code retrieved"));
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<IcdCodeResponse>> createIcdCode(@RequestBody IcdCodeCreateRequest request) {
         IcdCodeResponse result = icdCodeService.createIcdCode(request);
         return ResponseEntity.ok(ApiResponse.success(result, "ICD code created"));

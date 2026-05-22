@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,8 +27,8 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     private static final int MAX_RECORD_NO_ATTEMPTS = 10;
 
     @Override
-    public Page<MedicalRecordResponse> getMedicalRecords(Long patientId,
-                                                         Long doctorId,
+    public Page<MedicalRecordResponse> getMedicalRecords(UUID patientId,
+                                                         UUID doctorId,
                                                          RecordStatus status,
                                                          LocalDate fromDate,
                                                          LocalDate toDate,
@@ -47,7 +48,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     }
 
     @Override
-    public MedicalRecordResponse getMedicalRecordById(Long id) {
+    public MedicalRecordResponse getMedicalRecordById(UUID id) {
         MedicalRecord record = getMedicalRecordOrThrow(id);
         return toResponse(record);
     }
@@ -90,7 +91,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     }
 
     @Override
-    public MedicalRecordResponse updateMedicalRecord(Long id, MedicalRecordUpdateRequest request) {
+    public MedicalRecordResponse updateMedicalRecord(UUID id, MedicalRecordUpdateRequest request) {
         MedicalRecord record = getMedicalRecordOrThrow(id);
         if (record.getStatus() != RecordStatus.DRAFT) {
             throw new IllegalStateException("Only draft medical records can be updated");
@@ -118,7 +119,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     }
 
     @Override
-    public MedicalRecordResponse completeMedicalRecord(Long id) {
+    public MedicalRecordResponse completeMedicalRecord(UUID id) {
         MedicalRecord record = getMedicalRecordOrThrow(id);
         if (record.getStatus() != RecordStatus.DRAFT) {
             throw new IllegalStateException("Only draft medical records can be completed");
@@ -131,7 +132,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     }
 
     @Override
-    public MedicalRecordResponse archiveMedicalRecord(Long id) {
+    public MedicalRecordResponse archiveMedicalRecord(UUID id) {
         MedicalRecord record = getMedicalRecordOrThrow(id);
         if (record.getStatus() == RecordStatus.ARCHIVED) {
             throw new IllegalStateException("Medical record is already archived");
@@ -144,7 +145,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     }
 
     @Override
-    public void deleteMedicalRecord(Long id) {
+    public void deleteMedicalRecord(UUID id) {
         MedicalRecord record = getMedicalRecordOrThrow(id);
         if (record.getStatus() != RecordStatus.DRAFT) {
             throw new IllegalStateException("Only draft medical records can be deleted");
@@ -156,7 +157,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     }
 
     @Override
-    public MedicalRecordResponse setConfidential(Long id, MedicalRecordConfidentialRequest request) {
+    public MedicalRecordResponse setConfidential(UUID id, MedicalRecordConfidentialRequest request) {
         if (request == null || request.getIsConfidential() == null) {
             throw new IllegalArgumentException("isConfidential is required");
         }
@@ -168,7 +169,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         return toResponse(saved);
     }
 
-    private MedicalRecord getMedicalRecordOrThrow(Long id) {
+    private MedicalRecord getMedicalRecordOrThrow(UUID id) {
         return medicalRecordRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("MedicalRecord", "id", id));
     }

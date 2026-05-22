@@ -13,6 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "medical_record_diagnoses")
@@ -24,7 +25,7 @@ import java.time.LocalDateTime;
 public class MedicalRecordDiagnosis {
     @Id
     @Column(name = "medical_record_id", nullable = false)
-    private Long medicalRecordId;
+    private UUID medicalRecordId;
 
     @Id
     @Column(name = "icd_code_id")

@@ -9,8 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-public interface MedicalRecordRepository extends JpaRepository<MedicalRecord, Long> {
+public interface MedicalRecordRepository extends JpaRepository<MedicalRecord, UUID> {
 	@Query("""
 			SELECT m
 			FROM MedicalRecord m
@@ -21,8 +22,8 @@ public interface MedicalRecordRepository extends JpaRepository<MedicalRecord, Lo
 				AND (:startTime IS NULL OR m.visitDate >= :startTime)
 				AND (:endTime IS NULL OR m.visitDate <= :endTime)
 			""")
-	Page<MedicalRecord> searchMedicalRecords(@Param("patientId") Long patientId,
-											 @Param("doctorId") Long doctorId,
+	Page<MedicalRecord> searchMedicalRecords(@Param("patientId") UUID patientId,
+											 @Param("doctorId") UUID doctorId,
 											 @Param("status") RecordStatus status,
 											 @Param("startTime") LocalDateTime startTime,
 											 @Param("endTime") LocalDateTime endTime,
@@ -30,5 +31,5 @@ public interface MedicalRecordRepository extends JpaRepository<MedicalRecord, Lo
 
 	boolean existsByRecordNo(String recordNo);
 
-	boolean existsByAppointmentId(Long appointmentId);
+	boolean existsByAppointmentId(UUID appointmentId);
 }

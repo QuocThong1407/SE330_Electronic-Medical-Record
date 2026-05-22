@@ -9,26 +9,27 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 public interface MedicalRecordService {
-    Page<MedicalRecordResponse> getMedicalRecords(Long patientId,
-                                                  Long doctorId,
+    Page<MedicalRecordResponse> getMedicalRecords(UUID patientId,
+                                                  UUID doctorId,
                                                   RecordStatus status,
                                                   LocalDate fromDate,
                                                   LocalDate toDate,
                                                   Pageable pageable);
 
-    MedicalRecordResponse getMedicalRecordById(Long id);
+    MedicalRecordResponse getMedicalRecordById(UUID id);
 
     MedicalRecordResponse createMedicalRecord(MedicalRecordCreateRequest request);
 
-    MedicalRecordResponse updateMedicalRecord(Long id, MedicalRecordUpdateRequest request);
+    MedicalRecordResponse updateMedicalRecord(UUID id, MedicalRecordUpdateRequest request);
 
-    MedicalRecordResponse completeMedicalRecord(Long id);
+    MedicalRecordResponse completeMedicalRecord(UUID id);
 
-    MedicalRecordResponse archiveMedicalRecord(Long id);
+    MedicalRecordResponse archiveMedicalRecord(UUID id);
 
-    void deleteMedicalRecord(Long id);
+    void deleteMedicalRecord(UUID id);
 
-    MedicalRecordResponse setConfidential(Long id, MedicalRecordConfidentialRequest request);
+    MedicalRecordResponse setConfidential(UUID id, MedicalRecordConfidentialRequest request);
 }

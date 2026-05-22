@@ -21,6 +21,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -37,8 +38,8 @@ public class AppointmentServiceImpl implements AppointmentService {
     private static final int MAX_APPOINTMENT_NO_ATTEMPTS = 10;
 
     @Override
-    public Page<AppointmentResponse> getAppointments(Long doctorId,
-                                                     Long patientId,
+    public Page<AppointmentResponse> getAppointments(UUID doctorId,
+                                                     UUID patientId,
                                                      AppointmentStatus status,
                                                      LocalDate date,
                                                      Pageable pageable) {
@@ -55,7 +56,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public AppointmentResponse getAppointmentById(Long id) {
+    public AppointmentResponse getAppointmentById(UUID id) {
         Appointment appointment = getAppointmentOrThrow(id);
         return toResponse(appointment);
     }
@@ -92,7 +93,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public AppointmentResponse updateAppointment(Long id, AppointmentUpdateRequest request) {
+    public AppointmentResponse updateAppointment(UUID id, AppointmentUpdateRequest request) {
         Appointment appointment = getAppointmentOrThrow(id);
         if (!(appointment.getStatus() == AppointmentStatus.PENDING
                 || appointment.getStatus() == AppointmentStatus.CONFIRMED)) {
@@ -128,7 +129,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public AppointmentResponse confirmAppointment(Long id) {
+    public AppointmentResponse confirmAppointment(UUID id) {
         Appointment appointment = getAppointmentOrThrow(id);
         if (appointment.getStatus() != AppointmentStatus.PENDING) {
             throw new IllegalStateException("Only pending appointments can be confirmed");
@@ -142,7 +143,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public AppointmentResponse startAppointment(Long id) {
+    public AppointmentResponse startAppointment(UUID id) {
         Appointment appointment = getAppointmentOrThrow(id);
         if (appointment.getStatus() != AppointmentStatus.CONFIRMED) {
             throw new IllegalStateException("Only confirmed appointments can be started");
@@ -155,7 +156,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public AppointmentResponse completeAppointment(Long id) {
+    public AppointmentResponse completeAppointment(UUID id) {
         Appointment appointment = getAppointmentOrThrow(id);
         if (appointment.getStatus() != AppointmentStatus.IN_PROGRESS) {
             throw new IllegalStateException("Only in-progress appointments can be completed");
@@ -168,7 +169,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public AppointmentResponse cancelAppointment(Long id, AppointmentCancelRequest request) {
+    public AppointmentResponse cancelAppointment(UUID id, AppointmentCancelRequest request) {
         Appointment appointment = getAppointmentOrThrow(id);
         if (appointment.getStatus() == AppointmentStatus.COMPLETED
                 || appointment.getStatus() == AppointmentStatus.CANCELLED
@@ -186,7 +187,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public AppointmentResponse markNoShow(Long id) {
+    public AppointmentResponse markNoShow(UUID id) {
         Appointment appointment = getAppointmentOrThrow(id);
         if (appointment.getStatus() != AppointmentStatus.CONFIRMED
                 && appointment.getStatus() != AppointmentStatus.PENDING) {
@@ -200,13 +201,13 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public void deleteAppointment(Long id) {
+    public void deleteAppointment(UUID id) {
         Appointment appointment = getAppointmentOrThrow(id);
         appointmentRepository.delete(appointment);
     }
 
     @Override
-    public AvailableSlotsResponse getAvailableSlots(Long doctorId, LocalDate date) {
+    public AvailableSlotsResponse getAvailableSlots(UUID doctorId, LocalDate date) {
         if (doctorId == null || date == null) {
             throw new IllegalArgumentException("doctorId and date are required");
         }
@@ -241,7 +242,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .build();
     }
 
-    private Appointment getAppointmentOrThrow(Long id) {
+    private Appointment getAppointmentOrThrow(UUID id) {
         return appointmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment", "id", id));
     }
@@ -267,10 +268,10 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .build();
     }
 
-    private void validateNoOverlap(Long doctorId,
+    private void validateNoOverlap(UUID doctorId,
                                    LocalDateTime appointmentTime,
                                    Integer durationMinutes,
-                                   Long excludeId) {
+                                   UUID excludeId) {
         LocalDate date = appointmentTime.toLocalDate();
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.plusDays(1).atStartOfDay().minusNanos(1);
