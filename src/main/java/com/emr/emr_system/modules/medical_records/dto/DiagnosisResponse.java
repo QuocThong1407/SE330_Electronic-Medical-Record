@@ -7,13 +7,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class DiagnosisResponse {
-    private Long medicalRecordId;
+    private UUID medicalRecordId;
     private String icdCodeId;
     private String customDiagnosis;
     private DiagnosisType diagnosisType;

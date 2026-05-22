@@ -29,7 +29,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
 												@Param("endTime") LocalDateTime endTime,
 												Pageable pageable);
 
-		List<Appointment> findByDoctorIdAndAppointmentTimeBetweenAndStatusIn(   Long doctorId,
+	    List<Appointment> findByDoctorIdAndAppointmentTimeBetweenAndStatusIn(   UUID doctorId,
 																			    LocalDateTime startTime,
 																			    LocalDateTime endTime,
 																			    Collection<AppointmentStatus> statuses);
