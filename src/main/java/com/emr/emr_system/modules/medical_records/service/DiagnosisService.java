@@ -4,11 +4,12 @@ import com.emr.emr_system.modules.medical_records.dto.DiagnosisCreateRequest;
 import com.emr.emr_system.modules.medical_records.dto.DiagnosisResponse;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface DiagnosisService {
-    List<DiagnosisResponse> getDiagnoses(Long recordId);
+    List<DiagnosisResponse> getDiagnoses(UUID recordId);
 
-    DiagnosisResponse addDiagnosis(Long recordId, DiagnosisCreateRequest request);
+    DiagnosisResponse addDiagnosis(UUID recordId, DiagnosisCreateRequest request);
 
-    void deleteDiagnosis(Long recordId, String icdCodeId);
+    void deleteDiagnosis(UUID recordId, String icdCodeId);
 }

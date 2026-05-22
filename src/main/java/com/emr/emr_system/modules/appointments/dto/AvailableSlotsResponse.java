@@ -8,13 +8,14 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AvailableSlotsResponse {
-    private Long doctorId;
+    private UUID doctorId;
     private LocalDate date;
     private List<LocalDateTime> availableSlots;
 }

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ public class DiagnosisServiceImpl implements DiagnosisService {
     private static final int MAX_CUSTOM_CODE_ATTEMPTS = 10;
 
     @Override
-    public List<DiagnosisResponse> getDiagnoses(Long recordId) {
+    public List<DiagnosisResponse> getDiagnoses(UUID recordId) {
         if (!medicalRecordRepository.existsById(recordId)) {
             throw new ResourceNotFoundException("MedicalRecord", "id", recordId);
         }
@@ -46,7 +47,7 @@ public class DiagnosisServiceImpl implements DiagnosisService {
     }
 
     @Override
-    public DiagnosisResponse addDiagnosis(Long recordId, DiagnosisCreateRequest request) {
+    public DiagnosisResponse addDiagnosis(UUID recordId, DiagnosisCreateRequest request) {
         if (request == null) {
             throw new IllegalArgumentException("Request body is required");
         }
@@ -94,7 +95,7 @@ public class DiagnosisServiceImpl implements DiagnosisService {
     }
 
     @Override
-    public void deleteDiagnosis(Long recordId, String icdCodeId) {
+    public void deleteDiagnosis(UUID recordId, String icdCodeId) {
         if (icdCodeId == null || icdCodeId.isBlank()) {
             throw new IllegalArgumentException("icdCodeId is required");
         }
@@ -111,7 +112,7 @@ public class DiagnosisServiceImpl implements DiagnosisService {
         diagnosisRepository.delete(diagnosis);
     }
 
-    private String generateCustomCode(Long recordId) {
+    private String generateCustomCode(UUID recordId) {
         for (int attempt = 0; attempt < MAX_CUSTOM_CODE_ATTEMPTS; attempt++) {
             int sequence = ThreadLocalRandom.current().nextInt(0, 1_000_000);
             String code = String.format("CUST%06d", sequence);

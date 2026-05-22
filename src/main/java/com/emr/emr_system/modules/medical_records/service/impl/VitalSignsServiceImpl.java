@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +22,7 @@ public class VitalSignsServiceImpl implements VitalSignsService {
     private final MedicalRecordRepository medicalRecordRepository;
 
     @Override
-    public VitalSignsResponse getVitalSigns(Long recordId) {
+    public VitalSignsResponse getVitalSigns(UUID recordId) {
         if (!medicalRecordRepository.existsById(recordId)) {
             throw new ResourceNotFoundException("MedicalRecord", "id", recordId);
         }
@@ -32,7 +33,7 @@ public class VitalSignsServiceImpl implements VitalSignsService {
     }
 
     @Override
-    public VitalSignsResponse createVitalSigns(Long recordId, VitalSignsRequest request) {
+    public VitalSignsResponse createVitalSigns(UUID recordId, VitalSignsRequest request) {
         if (request == null) {
             throw new IllegalArgumentException("Request body is required");
         }
@@ -61,7 +62,7 @@ public class VitalSignsServiceImpl implements VitalSignsService {
     }
 
     @Override
-    public VitalSignsResponse updateVitalSigns(Long recordId, VitalSignsRequest request) {
+    public VitalSignsResponse updateVitalSigns(UUID recordId, VitalSignsRequest request) {
         if (request == null) {
             throw new IllegalArgumentException("Request body is required");
         }

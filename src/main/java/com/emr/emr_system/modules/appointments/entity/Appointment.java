@@ -12,8 +12,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "appointments")
@@ -23,20 +25,21 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Appointment {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    @UuidGenerator
+    private UUID id;
 
     @Column(name = "appointment_no", nullable = false, unique = true, length = 30)
     private String appointmentNo;
 
     @Column(name = "patient_id", nullable = false)
-    private Long patientId;
+    private UUID patientId;
 
     @Column(name = "doctor_id", nullable = false)
-    private Long doctorId;
+    private UUID doctorId;
 
     @Column(name = "department_id")
-    private Long departmentId;
+    private UUID departmentId;
 
     @Column(name = "appointment_time", nullable = false)
     private LocalDateTime appointmentTime;
@@ -61,7 +64,7 @@ public class Appointment {
     private String cancelledReason;
 
     @Column(name = "cancelled_by")
-    private Long cancelledBy;
+    private UUID cancelledBy;
 
     @Column(name = "confirmed_at")
     private LocalDateTime confirmedAt;

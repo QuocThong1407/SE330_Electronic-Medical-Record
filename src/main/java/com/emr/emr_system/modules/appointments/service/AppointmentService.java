@@ -10,31 +10,32 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 public interface AppointmentService {
-    Page<AppointmentResponse> getAppointments(Long doctorId,
-                                              Long patientId,
+    Page<AppointmentResponse> getAppointments(UUID doctorId,
+                                              UUID patientId,
                                               AppointmentStatus status,
                                               LocalDate date,
                                               Pageable pageable);
 
-    AppointmentResponse getAppointmentById(Long id);
+    AppointmentResponse getAppointmentById(UUID id);
 
     AppointmentResponse createAppointment(AppointmentCreateRequest request);
 
-    AppointmentResponse updateAppointment(Long id, AppointmentUpdateRequest request);
+    AppointmentResponse updateAppointment(UUID id, AppointmentUpdateRequest request);
 
-    AppointmentResponse confirmAppointment(Long id);
+    AppointmentResponse confirmAppointment(UUID id);
 
-    AppointmentResponse startAppointment(Long id);
+    AppointmentResponse startAppointment(UUID id);
 
-    AppointmentResponse completeAppointment(Long id);
+    AppointmentResponse completeAppointment(UUID id);
 
-    AppointmentResponse cancelAppointment(Long id, AppointmentCancelRequest request);
+    AppointmentResponse cancelAppointment(UUID id, AppointmentCancelRequest request);
 
-    AppointmentResponse markNoShow(Long id);
+    AppointmentResponse markNoShow(UUID id);
 
-    void deleteAppointment(Long id);
+    void deleteAppointment(UUID id);
 
-    AvailableSlotsResponse getAvailableSlots(Long doctorId, LocalDate date);
+    AvailableSlotsResponse getAvailableSlots(UUID doctorId, LocalDate date);
 }

@@ -10,9 +10,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "vital_signs")
@@ -22,11 +24,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class VitalSigns {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    @UuidGenerator
+    private UUID id;
 
     @Column(name = "medical_record_id", nullable = false, unique = true)
-    private Long medicalRecordId;
+    private UUID medicalRecordId;
 
     @Column(name = "temperature")
     private BigDecimal temperature;

@@ -12,8 +12,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "medical_records")
@@ -23,23 +25,24 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class MedicalRecord {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    @UuidGenerator
+    private UUID id;
 
     @Column(name = "record_no", nullable = false, unique = true, length = 30)
     private String recordNo;
 
     @Column(name = "appointment_id", unique = true)
-    private Long appointmentId;
+    private UUID appointmentId;
 
     @Column(name = "patient_id", nullable = false)
-    private Long patientId;
+    private UUID patientId;
 
     @Column(name = "doctor_id", nullable = false)
-    private Long doctorId;
+    private UUID doctorId;
 
     @Column(name = "department_id")
-    private Long departmentId;
+    private UUID departmentId;
 
     @Column(name = "visit_date", nullable = false)
     private LocalDateTime visitDate;
