@@ -53,7 +53,7 @@ public class MedicineServiceImpl implements MedicineService {
                 .build();
 
         Medicine saved = medicineRepository.save(medicine);
-        return toResponse(saved);
+        return toResponse(medicineRepository.findById(saved.getId()).orElseThrow());
     }
 
     @Override
@@ -103,24 +103,24 @@ public class MedicineServiceImpl implements MedicineService {
         }
 
         Medicine saved = medicineRepository.save(medicine);
-        return toResponse(saved);
+        return toResponse(medicineRepository.findById(saved.getId()).orElseThrow());
     }
 
     @Override
     public MedicineResponse updateStatus(UUID id, MedicineStatusRequest request) {
         Medicine medicine = getMedicineOrThrow(id);
         medicine.setIsActive(request.getIsActive());
-        return toResponse(medicineRepository.save(medicine));
+        Medicine saved = medicineRepository.save(medicine);
+        return toResponse(medicineRepository.findById(saved.getId()).orElseThrow());
     }
 
     @Override
     public MedicineResponse addStock(UUID id, MedicineStockRequest request) {
         Medicine medicine = getMedicineOrThrow(id);
         medicine.setStockQuantity(medicine.getStockQuantity() + request.getQuantity());
-        return toResponse(medicineRepository.save(medicine));
+        Medicine saved = medicineRepository.save(medicine);
+        return toResponse(medicineRepository.findById(saved.getId()).orElseThrow());
     }
-
-    // ── helpers ──────────────────────────────────────────────────────────────
 
     private Medicine getMedicineOrThrow(UUID id) {
         return medicineRepository.findById(id)
