@@ -1,6 +1,6 @@
-import { api } from "@/lib/api";
-import type { ApiResponse } from "@/types/common";
-import type { AuthResponse, UserSummary } from "@/types/auth";
+import { api } from "../lib/api";
+import type { ApiResponse } from "../types/common";
+import type { AuthResponse, UserSummary } from "../types/auth";
 
 export async function login(email: string, password: string) {
   const { data } = await api.post<ApiResponse<AuthResponse>>("/auth/login", {
