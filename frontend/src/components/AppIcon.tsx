@@ -9,7 +9,9 @@ export type AppIconName =
   | "collapse"
   | "logout"
   | "chevron"
-  | "profile";
+  | "profile"
+  | "shield"
+  | "refresh";
 
 export function AppIcon({
   name,
@@ -106,6 +108,19 @@ export function AppIcon({
         <svg viewBox="0 0 24 24" className={`${className} ${common}`} strokeWidth="1.8">
           <circle cx="12" cy="8" r="3.25" />
           <path d="M5 20a7 7 0 0114 0" />
+        </svg>
+      );
+    case "shield":
+      return (
+        <svg viewBox="0 0 24 24" className={`${className} ${common}`} strokeWidth="1.8">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+      );
+    case "refresh":
+      return (
+        <svg viewBox="0 0 24 24" className={`${className} ${common}`} strokeWidth="1.8">
+          <path d="M20 11a8.1 8.1 0 00-15.5-2m-.5-5v5h5" />
+          <path d="M4 13a8.1 8.1 0 0015.5 2m.5 5v-5h-5" />
         </svg>
       );
     default:
