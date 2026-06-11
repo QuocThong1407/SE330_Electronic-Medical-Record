@@ -32,7 +32,10 @@ export async function getSpecializations() {
 }
 
 export async function getMedicines() {
-  return fetchList<Medicine>("/medicines");
+  // Backend returns Page<MedicineResponse> wrapped in ApiResponse
+  // Page.content contains the actual list of medicines
+  const { data } = await api.get<ApiResponse<{ content: Medicine[] }>>("/medicines?page=0&size=1000");
+  return data.data.content;
 }
 
 export async function getMedicineCategories() {
@@ -69,7 +72,7 @@ export async function updateMedicine(id: string, data: any) {
 }
 
 export async function updateMedicineStatus(id: string, data: any) {
-  const { data: response } = await api.put<ApiResponse<Medicine>>(`/medicines/${id}/status`, data);
+  const { data: response } = await api.patch<ApiResponse<Medicine>>(`/medicines/${id}/status`, data);
   return response.data;
 }
 

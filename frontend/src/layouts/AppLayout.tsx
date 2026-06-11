@@ -48,7 +48,7 @@ const navItems: NavItem[] = [
    { to: "/specializations", label: "Specializations", icon: "specializations" },
    { to: "/doctors", label: "Doctors", icon: "doctors" },
    { to: "/patients", label: "Patients", icon: "patients" },
-   { to: "/medicines", label: "Medicines", icon: "patients" },
+   { to: "/medicines", label: "Medicines", icon: "medicines" },
    { to: "/medicine-categories", label: "Medicine Categories", icon: "categories" },
  ];
 
