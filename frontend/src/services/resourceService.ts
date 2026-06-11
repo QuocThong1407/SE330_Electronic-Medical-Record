@@ -4,6 +4,7 @@ import type { Department, Specialization } from "../types/catalog";
 import type { DoctorProfile } from "../types/doctor";
 import type { PatientProfile } from "../types/patient";
 import type { UserSummary } from "../types/auth";
+import type { Medicine, MedicineCategory } from "../types/medicine";
 
 async function fetchList<T>(path: string) {
   const { data } = await api.get<ApiResponse<T[]>>(path);
@@ -28,4 +29,55 @@ export async function getDepartments() {
 
 export async function getSpecializations() {
   return fetchList<Specialization>("/specializations");
+}
+
+export async function getMedicines() {
+  return fetchList<Medicine>("/medicines");
+}
+
+export async function getMedicineCategories() {
+   return fetchList<MedicineCategory>("/medicine-categories");
+ }
+
+export async function createMedicineCategory(data: any) {
+   const { data: response } = await api.post<ApiResponse<MedicineCategory>>("/medicine-categories", data);
+   return response.data;
+ }
+
+export async function updateMedicineCategory(id: string, data: any) {
+   const { data: response } = await api.put<ApiResponse<MedicineCategory>>(`/medicine-categories/${id}`, data);
+   return response.data;
+ }
+
+export async function deleteMedicineCategory(id: string) {
+   await api.delete(`/medicine-categories/${id}`);
+ }
+
+export async function getMedicineById(id: string) {
+  const { data } = await api.get<ApiResponse<Medicine>>(`/medicines/${id}`);
+  return data.data;
+}
+
+export async function createMedicine(data: any) {
+  const { data: response } = await api.post<ApiResponse<Medicine>>("/medicines", data);
+  return response.data;
+}
+
+export async function updateMedicine(id: string, data: any) {
+  const { data: response } = await api.put<ApiResponse<Medicine>>(`/medicines/${id}`, data);
+  return response.data;
+}
+
+export async function updateMedicineStatus(id: string, data: any) {
+  const { data: response } = await api.put<ApiResponse<Medicine>>(`/medicines/${id}/status`, data);
+  return response.data;
+}
+
+export async function addMedicineStock(id: string, data: any) {
+  const { data: response } = await api.put<ApiResponse<Medicine>>(`/medicines/${id}/stock`, data);
+  return response.data;
+}
+
+export async function deleteMedicine(id: string) {
+  await api.delete(`/medicines/${id}`);
 }

@@ -42,13 +42,15 @@ const workspaceByRole: Record<WorkspaceRole, WorkspaceMeta> = {
 };
 
 const navItems: NavItem[] = [
-  { to: "/", label: "Dashboard", icon: "dashboard" },
-  { to: "/users", label: "Users", icon: "users" },
-  { to: "/departments", label: "Departments", icon: "departments" },
-  { to: "/specializations", label: "Specializations", icon: "specializations" },
-  { to: "/doctors", label: "Doctors", icon: "doctors" },
-  { to: "/patients", label: "Patients", icon: "patients" },
-];
+   { to: "/", label: "Dashboard", icon: "dashboard" },
+   { to: "/users", label: "Users", icon: "users" },
+   { to: "/departments", label: "Departments", icon: "departments" },
+   { to: "/specializations", label: "Specializations", icon: "specializations" },
+   { to: "/doctors", label: "Doctors", icon: "doctors" },
+   { to: "/patients", label: "Patients", icon: "patients" },
+   { to: "/medicines", label: "Medicines", icon: "patients" },
+   { to: "/medicine-categories", label: "Medicine Categories", icon: "categories" },
+ ];
 
 function getInitials(value: string) {
   return value

@@ -1,17 +1,20 @@
 export type AppIconName =
-  | "dashboard"
-  | "users"
-  | "departments"
-  | "specializations"
-  | "doctors"
-  | "patients"
-  | "menu"
-  | "collapse"
-  | "logout"
-  | "chevron"
-  | "profile"
-  | "shield"
-  | "refresh";
+   | "dashboard"
+   | "users"
+   | "departments"
+   | "specializations"
+   | "doctors"
+   | "patients"
+   | "categories"
+   | "menu"
+   | "collapse"
+   | "logout"
+   | "chevron"
+   | "profile"
+   | "shield"
+   | "refresh"
+   | "check"
+   | "close";
 
 export function AppIcon({
   name,
@@ -74,6 +77,14 @@ export function AppIcon({
           <path d="M19 3v6" />
         </svg>
       );
+    case "categories":
+      return (
+        <svg viewBox="0 0 24 24" className={`${className} ${common}`} strokeWidth="1.8">
+          <path d="M4 6h16" />
+          <path d="M4 12h10" />
+          <path d="M4 18h14" />
+        </svg>
+      );
     case "menu":
       return (
         <svg viewBox="0 0 24 24" className={`${className} ${common}`} strokeWidth="1.9">
@@ -121,6 +132,18 @@ export function AppIcon({
         <svg viewBox="0 0 24 24" className={`${className} ${common}`} strokeWidth="1.8">
           <path d="M20 11a8.1 8.1 0 00-15.5-2m-.5-5v5h5" />
           <path d="M4 13a8.1 8.1 0 0015.5 2m.5 5v-5h-5" />
+        </svg>
+      );
+    case "check":
+      return (
+        <svg viewBox="0 0 24 24" className={`${className} ${common}`} strokeWidth="2">
+          <path d="M20 6L9 17l-5-5" />
+        </svg>
+      );
+    case "close":
+      return (
+        <svg viewBox="0 0 24 24" className={`${className} ${common}`} strokeWidth="2">
+          <path d="M18 6L6 18M6 6l12 12" />
         </svg>
       );
     default:
