@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { AppIcon } from "../../components/AppIcon";
 import { useAuth } from "../../contexts/AuthContext";
 import { api } from "../../lib/api";
-import { getDoctors, getUsers } from "../../services/resourceService";
-import type { Department } from "../../types/catalog";
+import { getDoctors, getSpecializations, getUsers } from "../../services/resourceService";
+import type { Department, Specialization } from "../../types/catalog";
 import type { DoctorProfile } from "../../types/doctor";
 import type { UserSummary } from "../../types/auth";
 
@@ -72,12 +72,33 @@ function DepartmentBadge({ departmentName }: DepartmentBadgeProps) {
   );
 }
 
+type SpecializationBadgeProps = {
+  specializationName?: string | null;
+};
+
+function SpecializationBadge({ specializationName }: SpecializationBadgeProps) {
+  if (!specializationName) {
+    return (
+      <span className="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold bg-slate-100 text-slate-600 ring-1 ring-inset ring-slate-200">
+        Unassigned
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold bg-teal-100 text-teal-700 ring-1 ring-inset ring-teal-200">
+      <AppIcon name="specializations" className="h-3.5 w-3.5" />
+      {specializationName}
+    </span>
+  );
+}
+
 type DoctorFormModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (doctor: Partial<DoctorAdminCreateRequest>) => void;
   initialData?: Partial<DoctorProfileResponse> | null;
   departments: Department[];
+  specializations: Specialization[];
   users: UserSummary[];
 };
 
@@ -86,6 +107,7 @@ interface DoctorAdminCreateRequest {
   fullName: string;
   gender: string;
   departmentId?: string | null;
+  specializationId?: string | null;
   phone?: string | null;
   emailContact?: string | null;
   degree?: string | null;
@@ -97,6 +119,7 @@ interface DoctorProfileResponse {
   id: string;
   userId?: string | null;
   departmentId?: string | null;
+  specializationId?: string | null;
   employeeCode: string;
   fullName: string;
   gender: string;
@@ -115,6 +138,7 @@ function DoctorFormModal({
   onSubmit,
   initialData,
   departments,
+  specializations,
   users,
 }: DoctorFormModalProps) {
   const [formData, setFormData] = useState<DoctorAdminCreateRequest>({
@@ -122,6 +146,7 @@ function DoctorFormModal({
     fullName: "",
     gender: "MALE",
     departmentId: "",
+    specializationId: "",
     phone: "",
     emailContact: "",
     degree: "",
@@ -136,6 +161,7 @@ function DoctorFormModal({
         fullName: initialData.fullName || "",
         gender: initialData.gender || "MALE",
         departmentId: initialData.departmentId || "",
+        specializationId: initialData.specializationId || "",
         phone: initialData.phone || "",
         emailContact: initialData.emailContact || "",
         degree: initialData.degree || "",
@@ -148,6 +174,7 @@ function DoctorFormModal({
         fullName: "",
         gender: "MALE",
         departmentId: "",
+        specializationId: "",
         phone: "",
         emailContact: "",
         degree: "",
@@ -291,6 +318,23 @@ function DoctorFormModal({
 
             <div className="space-y-2">
               <label
+                htmlFor="dateOfBirth"
+                className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500"
+              >
+                Date of Birth
+              </label>
+              <input
+                id="dateOfBirth"
+                name="dateOfBirth"
+                type="date"
+                value={formData.dateOfBirth || ""}
+                onChange={handleChange}
+                className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-100"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label
                 htmlFor="departmentId"
                 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500"
               >
@@ -319,19 +363,30 @@ function DoctorFormModal({
 
             <div className="space-y-2">
               <label
-                htmlFor="dateOfBirth"
+                htmlFor="specializationId"
                 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500"
               >
-                Date of Birth
+                Specialization
               </label>
-              <input
-                id="dateOfBirth"
-                name="dateOfBirth"
-                type="date"
-                value={formData.dateOfBirth || ""}
-                onChange={handleChange}
-                className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-100"
-              />
+              <div className="relative">
+                <select
+                  id="specializationId"
+                  name="specializationId"
+                  value={formData.specializationId || ""}
+                  onChange={handleChange}
+                  className="h-11 w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 px-4 pr-10 text-sm text-slate-900 outline-none transition focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-100"
+                >
+                  <option value="">Select specialization</option>
+                  {specializations.map((spec) => (
+                    <option key={spec.id} value={spec.id}>
+                      {spec.name}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-4">
+                  <AppIcon name="chevron" className="h-4 w-4 text-slate-400" />
+                </div>
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -370,8 +425,7 @@ function DoctorFormModal({
               />
             </div>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
+            <div className="space-y-2">
                 <label
                   htmlFor="degree"
                   className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500"
@@ -408,7 +462,6 @@ function DoctorFormModal({
                   placeholder="Enter years of experience"
                 />
               </div>
-            </div>
           </div>
 
           <div className="mt-6 flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
@@ -437,6 +490,7 @@ type DoctorViewModalProps = {
   onClose: () => void;
   doctor: DoctorProfileResponse | null;
   departments: Department[];
+  specializations: Specialization[];
 };
 
 function DoctorViewModal({
@@ -444,6 +498,7 @@ function DoctorViewModal({
   onClose,
   doctor,
   departments,
+  specializations,
 }: DoctorViewModalProps) {
   if (!isOpen || !doctor) return null;
 
@@ -462,6 +517,13 @@ function DoctorViewModal({
       "Unassigned"
     );
   }, [departments, doctor.departmentId]);
+
+  const specializationName = useMemo(() => {
+    return (
+      specializations.find((s) => s.id === doctor.specializationId)?.name ||
+      "Unassigned"
+    );
+  }, [specializations, doctor.specializationId]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -548,6 +610,14 @@ function DoctorViewModal({
               </div>
               <div className="rounded-xl bg-slate-50 p-4">
                 <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                  Specialization
+                </div>
+                <div className="mt-1">
+                  <SpecializationBadge specializationName={specializationName} />
+                </div>
+              </div>
+              <div className="rounded-xl bg-slate-50 p-4">
+                <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                   Experience
                 </div>
                 <div className="mt-1 text-sm text-slate-700">
@@ -591,6 +661,7 @@ export function DoctorsPage() {
   const { user } = useAuth();
   const [doctors, setDoctors] = useState<DoctorProfileResponse[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
+  const [specializations, setSpecializations] = useState<Specialization[]>([]);
   const [users, setUsers] = useState<UserSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -604,13 +675,15 @@ export function DoctorsPage() {
 
   const fetchDoctors = async () => {
     try {
-      const [doctorsData, departmentsData, usersData] = await Promise.all([
+      const [doctorsData, departmentsData, specializationsData, usersData] = await Promise.all([
         getDoctors(),
         api.get("/departments").then((res) => res.data.data),
+        getSpecializations(),
         getUsers(),
       ]);
       setDoctors(doctorsData);
       setDepartments(departmentsData);
+      setSpecializations(specializationsData);
       setUsers(usersData);
     } catch (error) {
       console.error("Failed to fetch data:", error);
@@ -691,6 +764,7 @@ export function DoctorsPage() {
           fullName: doctorData.fullName,
           gender: doctorData.gender,
           departmentId: doctorData.departmentId || null,
+          specializationId: doctorData.specializationId || null,
           phone: doctorData.phone || null,
           emailContact: doctorData.emailContact || null,
           degree: doctorData.degree || null,
@@ -709,6 +783,7 @@ export function DoctorsPage() {
           fullName: doctorData.fullName,
           gender: doctorData.gender,
           departmentId: doctorData.departmentId || null,
+          specializationId: doctorData.specializationId || null,
           phone: doctorData.phone || null,
           emailContact: doctorData.emailContact || null,
           degree: doctorData.degree || null,
@@ -722,6 +797,7 @@ export function DoctorsPage() {
           gender: doctorData.gender || "MALE",
           userId: doctorData.userId || null,
           departmentId: doctorData.departmentId || null,
+          specializationId: doctorData.specializationId || null,
           phone: doctorData.phone || null,
           emailContact: doctorData.emailContact || null,
           degree: doctorData.degree || null,
@@ -1051,6 +1127,7 @@ export function DoctorsPage() {
         onSubmit={handleFormSubmit}
         initialData={editingDoctor}
         departments={departments}
+        specializations={specializations}
         users={users}
       />
 
@@ -1060,6 +1137,7 @@ export function DoctorsPage() {
         onClose={() => setIsViewModalOpen(false)}
         doctor={viewingDoctor}
         departments={departments}
+        specializations={specializations}
       />
     </section>
   );
