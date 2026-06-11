@@ -30,6 +30,16 @@ export default function App() {
 
         <Route
           element={
+            <ProtectedRoute allowedRoles={["ADMIN", "DOCTOR"]}>
+              <Outlet />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/medicines" element={<MedicinesPage />} />
+      </Route>
+
+        <Route
+          element={
             <ProtectedRoute allowedRoles={["ADMIN"]}>
               <Outlet />
             </ProtectedRoute>
@@ -40,7 +50,6 @@ export default function App() {
           <Route path="/specializations" element={<SpecializationsPage />} />
           <Route path="/doctors" element={<DoctorsPage />} />
           <Route path="/patients" element={<PatientsPage />} />
-          <Route path="/medicines" element={<MedicinesPage />} />
           <Route path="/medicine-categories" element={<MedicineCategoriesPage />} />
         </Route>
       </Route>

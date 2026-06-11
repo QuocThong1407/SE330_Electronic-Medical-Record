@@ -11,6 +11,7 @@ import {
   deleteMedicine,
 } from "../../services/resourceService";
 import type { Medicine, MedicineCategory, MedicineUnit, MedicineCreateRequest, MedicineStatusRequest, MedicineStockRequest } from "../../types/medicine";
+import { useAuth } from "../../contexts/AuthContext";
 
 type UnitBadgeProps = {
   unit: MedicineUnit;
@@ -476,8 +477,8 @@ function MedicineViewModal({
         className="absolute inset-0 bg-slate-950/25 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
-      <div className="relative w-full max-w-2xl overflow-hidden rounded-2xl bg-white shadow-soft ring-1 ring-slate-200">
-        <div className="border-b border-slate-100 bg-slate-50/50 px-6 py-4">
+      <div className="relative flex flex-col w-full max-w-2xl max-h-[calc(100vh-2rem)] overflow-hidden rounded-2xl bg-white shadow-soft ring-1 ring-slate-200">
+        <div className="border-b border-slate-100 bg-slate-50/50 px-6 py-4 shrink-0">
           <div className="flex items-start justify-between">
             <div>
               <h3 className="text-lg font-semibold text-slate-900">
@@ -496,7 +497,7 @@ function MedicineViewModal({
           </div>
         </div>
 
-        <div className="px-6 py-5">
+        <div className="flex-1 overflow-y-auto px-6 py-5">
           <div className="space-y-6">
             <div className="flex items-center gap-4">
               <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-xl font-bold text-white shadow-lg">
@@ -606,7 +607,7 @@ function MedicineViewModal({
           </div>
         </div>
 
-        <div className="border-t border-slate-100 bg-slate-50/50 px-6 py-4">
+        <div className="border-t border-slate-100 bg-slate-50/50 px-6 py-4 shrink-0">
           <button
             onClick={onClose}
             className="h-10 w-full rounded-xl bg-slate-100 text-sm font-semibold text-slate-700 transition hover:bg-slate-200"
@@ -725,6 +726,9 @@ export function MedicinesPage() {
   const [viewingMedicine, setViewingMedicine] = useState<Medicine | null>(null);
   const [addingStockMedicine, setAddingStockMedicine] = useState<Medicine | null>(null);
 
+  const { user } = useAuth();
+  const isAdmin = user?.role === "ADMIN";
+
   const fetchMedicines = async () => {
     try {
       const [medicinesData, categoriesData] = await Promise.all([
@@ -795,6 +799,11 @@ export function MedicinesPage() {
   const handleAddStock = (medicine: Medicine) => {
     setAddingStockMedicine(medicine);
     setIsAddStockModalOpen(true);
+  };
+
+  const handleRefresh = () => {
+    setLoading(true);
+    void fetchMedicines();
   };
 
   const handleDeleteMedicine = async (medicineId: string) => {
@@ -1085,13 +1094,27 @@ export function MedicinesPage() {
               </div>
             </div>
           </div>
-          <button
-            onClick={handleCreateMedicine}
-            className="flex h-11 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 text-sm font-semibold text-white shadow-[0_10px_20px_rgba(16,185,129,0.18)] transition hover:bg-emerald-800 hover:shadow-[0_12px_24px_rgba(16,185,129,0.22)] active:scale-[0.98]"
-          >
-            <AppIcon name="patients" className="h-5 w-5" />
-            <span>Add Medicine</span>
-          </button>
+
+          {/* Refresh Button */}
+          <div className="flex">
+            <button
+              onClick={handleRefresh}
+              className="flex h-11 items-center justify-center gap-2 rounded-xl bg-slate-100 px-4 text-sm font-semibold text-slate-600 transition hover:bg-slate-200 hover:text-slate-900"
+            >
+              <AppIcon name="refresh" className="h-5 w-5" />
+              <span>Refresh</span>
+            </button>
+          </div>
+
+          {isAdmin && (
+            <button
+              onClick={handleCreateMedicine}
+              className="flex h-11 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 text-sm font-semibold text-white shadow-[0_10px_20px_rgba(16,185,129,0.18)] transition hover:bg-emerald-800 hover:shadow-[0_12px_24px_rgba(16,185,129,0.22)] active:scale-[0.98]"
+            >
+              <AppIcon name="medicines" className="h-5 w-5" />
+              <span>Add Medicine</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -1191,48 +1214,64 @@ export function MedicinesPage() {
                     <td className="px-6 py-4">
                       <StatusBadge isActive={medicine.isActive} />
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => handleViewMedicine(medicine)}
-                          className="rounded-lg p-2 text-slate-500 transition hover:bg-blue-50 hover:text-blue-600"
-                          title="View details"
-                        >
-                          <AppIcon name="menu" className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => handleEditMedicine(medicine)}
-                          className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-emerald-600"
-                          title="Edit medicine"
-                        >
-                          <AppIcon name="edit" className="h-[14px] w-[14px]" />
-                        </button>
-                        <button
-                          onClick={() => handleAddStock(medicine)}
-                          className="rounded-lg p-2 text-slate-500 transition hover:bg-emerald-50 hover:text-emerald-600"
-                          title="Add stock"
-                        >
-                          <AppIcon name="plus" className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => handleToggleStatus(medicine)}
-                          className="rounded-lg p-2 text-slate-500 transition hover:bg-amber-50 hover:text-amber-600"
-                          title={medicine.isActive ? "Deactivate" : "Activate"}
-                        >
-                          <AppIcon 
-                            name={medicine.isActive ? "close" : "check"} 
-                            className="h-4 w-4" 
-                          />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteMedicine(medicine.id)}
-                          className="rounded-lg p-2 text-slate-500 transition hover:bg-red-50 hover:text-red-600"
-                          title="Delete medicine"
-                        >
-                          <AppIcon name="logout" className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
+                    {isAdmin && (
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => handleViewMedicine(medicine)}
+                            className="rounded-lg p-2 text-slate-500 transition hover:bg-blue-50 hover:text-blue-600"
+                            title="View details"
+                          >
+                            <AppIcon name="menu" className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => handleEditMedicine(medicine)}
+                            className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-emerald-600"
+                            title="Edit medicine"
+                          >
+                            <AppIcon name="edit" className="h-[14px] w-[14px]" />
+                          </button>
+                          <button
+                            onClick={() => handleAddStock(medicine)}
+                            className="rounded-lg p-2 text-slate-500 transition hover:bg-emerald-50 hover:text-emerald-600"
+                            title="Add stock"
+                          >
+                            <AppIcon name="plus" className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => handleToggleStatus(medicine)}
+                            className="rounded-lg p-2 text-slate-500 transition hover:bg-amber-50 hover:text-amber-600"
+                            title={medicine.isActive ? "Deactivate" : "Activate"}
+                          >
+                            <AppIcon 
+                              name={medicine.isActive ? "close" : "check"} 
+                              className="h-4 w-4" 
+                            />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteMedicine(medicine.id)}
+                            className="rounded-lg p-2 text-slate-500 transition hover:bg-red-50 hover:text-red-600"
+                            title="Delete medicine"
+                          >
+                            <AppIcon name="logout" className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    )}
+
+                    {!isAdmin && (
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => handleViewMedicine(medicine)}
+                            className="rounded-lg p-2 text-slate-500 transition hover:bg-blue-50 hover:text-blue-600"
+                            title="View details"
+                          >
+                            <AppIcon name="menu" className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))
               )}
