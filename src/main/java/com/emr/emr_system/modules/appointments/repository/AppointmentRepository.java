@@ -17,10 +17,10 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
 		@Query("""
 				SELECT a
 				FROM Appointment a
-				WHERE (:doctorId IS NULL OR a.doctorId = :doctorId)
-					AND (:patientId IS NULL OR a.patientId = :patientId)
-					AND (:status IS NULL OR a.status = :status)
-					AND (:startTime IS NULL OR :endTime IS NULL OR a.appointmentTime BETWEEN :startTime AND :endTime)
+				WHERE (cast(:doctorId as uuid) IS NULL OR a.doctorId = :doctorId)
+					AND (cast(:patientId as uuid) IS NULL OR a.patientId = :patientId)
+					AND (cast(:status as text) IS NULL OR a.status = :status)
+					AND (cast(:startTime as timestamp) IS NULL OR cast(:endTime as timestamp) IS NULL OR a.appointmentTime BETWEEN :startTime AND :endTime)
 				""")
 		Page<Appointment> searchAppointments(   @Param("doctorId") UUID doctorId,
 								            @Param("patientId") UUID patientId,
