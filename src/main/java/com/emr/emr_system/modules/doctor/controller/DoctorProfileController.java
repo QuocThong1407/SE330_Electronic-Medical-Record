@@ -53,7 +53,7 @@ public class DoctorProfileController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST', 'DOCTOR')")
     public ApiResponse<List<DoctorProfileResponse>> getAllDoctors() {
         return ApiResponse.success(doctorProfileService.getAllDoctors(), "Doctor list retrieved successfully");
     }

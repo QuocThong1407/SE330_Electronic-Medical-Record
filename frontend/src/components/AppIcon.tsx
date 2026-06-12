@@ -1,23 +1,30 @@
 export type AppIconName =
-   | "dashboard"
-   | "users"
-   | "departments"
-   | "specializations"
-   | "doctors"
-   | "patients"
-   | "categories"
-   | "menu"
-   | "collapse"
-   | "logout"
-   | "chevron"
-   | "profile"
-   | "shield"
-   | "refresh"
-   | "check"
-   | "close"
-   | "plus"
-   | "edit"
-   | "medicines";
+    | "dashboard"
+    | "users"
+    | "departments"
+    | "specializations"
+    | "doctors"
+    | "patients"
+    | "categories"
+    | "menu"
+    | "collapse"
+    | "logout"
+    | "chevron"
+    | "profile"
+    | "shield"
+    | "refresh"
+    | "check"
+    | "close"
+    | "plus"
+    | "edit"
+    | "medicines"
+    | "calendar"
+    | "search"
+    | "table"
+    | "play"
+    | "eye"
+    | "trash"
+    | "clock";
 
 export function AppIcon({
   name,
@@ -167,6 +174,59 @@ export function AppIcon({
         <svg viewBox="0 0 24 24" className={`${className} ${common}`} strokeWidth="1.8">
           <path d="M4.5 12.5l8-8a4.95 4.95 0 017 7l-8 8a4.95 4.95 0 01-7-7z" />
           <path d="M8.5 11.5l4 4" />
+        </svg>
+      );
+    case "calendar":
+      return (
+        <svg viewBox="0 0 24 24" className={`${className} ${common}`} strokeWidth="1.8">
+          <path d="M16 2v4M8 2v4M3 10h18" />
+          <path d="M19 4h-3a2 2 0 00-2 2v14a2 2 0 01-2 2H8a2 2 0 01-2-2V6a2 2 0 00-2-2H3" />
+        </svg>
+      );
+    case "search":
+      return (
+        <svg viewBox="0 0 24 24" className={`${className} ${common}`} strokeWidth="1.8">
+          <circle cx="11" cy="11" r="7" />
+          <path d="M21 21l-4.3-4.3" />
+        </svg>
+      );
+    case "table":
+      return (
+        <svg viewBox="0 0 24 24" className={`${className} ${common}`} strokeWidth="1.8">
+          <path d="M9 3H5a2 2 0 00-2 2v4h6V3z" />
+          <path d="M9 21H5a2 2 0 01-2-2v-4h6v6z" />
+          <path d="M21 9h-4V3a2 2 0 00-2-2h4v6z" />
+          <path d="M21 21h-4v-6a2 2 0 00-2-2h4v6z" />
+          <path d="M9 9h6" />
+          <path d="M9 15h6" />
+        </svg>
+      );
+    case "play":
+      return (
+        <svg viewBox="0 0 24 24" className={`${className} ${common}`} strokeWidth="1.8">
+          <path d="M5 3l14 9-14 9V3z" />
+        </svg>
+      );
+    case "eye":
+      return (
+        <svg viewBox="0 0 24 24" className={`${className} ${common}`} strokeWidth="1.8">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+      );
+    case "trash":
+      return (
+        <svg viewBox="0 0 24 24" className={`${className} ${common}`} strokeWidth="1.8">
+          <path d="M3 6h18" />
+          <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6" />
+          <path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+        </svg>
+      );
+    case "clock":
+      return (
+        <svg viewBox="0 0 24 24" className={`${className} ${common}`} strokeWidth="1.8">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 6v6l4 2" />
         </svg>
       );
     default:

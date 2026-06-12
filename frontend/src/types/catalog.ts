@@ -8,6 +8,7 @@ export interface Department {
   active: boolean;
   createdAt?: string;
   updatedAt?: string;
+  doctors?: { id: string; fullName: string }[];
 }
 
 export interface Specialization {

@@ -11,6 +11,7 @@ import { DoctorsPage } from "./pages/doctors/DoctorsPage";
 import { PatientsPage } from "./pages/patients/PatientsPage";
 import { MedicinesPage } from "./pages/medicines/MedicinesPage";
 import { MedicineCategoriesPage } from "./pages/medicine-categories/MedicineCategoriesPage";
+import { AppointmentsPage } from "./pages/appointments/AppointmentsPage";
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
         }
       >
         <Route path="/" element={<DashboardPage />} />
+        <Route path="/appointments" element={<AppointmentsPage />} />
 
         <Route
           element={

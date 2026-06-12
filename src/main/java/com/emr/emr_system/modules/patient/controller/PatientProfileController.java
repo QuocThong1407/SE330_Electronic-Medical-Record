@@ -41,7 +41,7 @@ public class PatientProfileController {
     }
 
     @PutMapping("/profile")
-    @PreAuthorize("hasAnyRole('PATIENT', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('PATIENT', 'ADMIN', 'RECEPTIONIST')")
     public ApiResponse<PatientProfileResponse> updateProfile(
             @AuthenticationPrincipal UserPrincipal principal,
             @Valid @RequestBody PatientProfileRequest request
@@ -50,25 +50,25 @@ public class PatientProfileController {
     }
 
     @GetMapping("/profile")
-    @PreAuthorize("hasAnyRole('PATIENT', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('PATIENT', 'ADMIN', 'RECEPTIONIST')")
     public ApiResponse<PatientProfileResponse> getProfile(@AuthenticationPrincipal UserPrincipal principal) {
         return ApiResponse.success(patientProfileService.getMyProfile(principal), "Patient profile retrieved successfully");
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST', 'DOCTOR')")
     public ApiResponse<List<PatientProfileResponse>> getAllPatients() {
         return ApiResponse.success(patientProfileService.getAllPatients(), "Patient list retrieved successfully");
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
     public ApiResponse<PatientProfileResponse> getPatientById(@PathVariable UUID id) {
         return ApiResponse.success(patientProfileService.getPatientById(id), "Patient profile retrieved successfully");
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
     public ApiResponse<PatientProfileResponse> updatePatientById(
             @PathVariable UUID id,
             @Valid @RequestBody PatientProfileRequest request

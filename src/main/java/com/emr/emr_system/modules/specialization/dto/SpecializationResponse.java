@@ -1,6 +1,7 @@
 package com.emr.emr_system.modules.specialization.dto;
 
 import com.emr.emr_system.modules.specialization.entity.Specialization;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,6 +14,8 @@ public class SpecializationResponse {
     private UUID id;
     private String name;
     private String description;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
     public static SpecializationResponse from(Specialization specialization) {
