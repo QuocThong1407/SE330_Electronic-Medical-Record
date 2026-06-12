@@ -59,6 +59,8 @@ function getNavItems(role: WorkspaceRole): NavItem[] {
     return [
       ...shared,
       { to: "/patients", label: "Patients", icon: "patients" },
+      { to: "/doctors", label: "Doctors", icon: "doctors" },
+      { to: "/specializations", label: "Specializations", icon: "specializations" },
     ];
   }
 

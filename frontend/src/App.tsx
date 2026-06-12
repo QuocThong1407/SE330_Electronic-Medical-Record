@@ -33,6 +33,16 @@ export default function App() {
       >
         <Route path="/" element={<DashboardPage />} />
         <Route path="/appointments" element={<AppointmentsPage />} />
+        
+        <Route
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN", "DOCTOR", "RECEPTIONIST"]}>
+              <Outlet />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/medicines" element={<MedicinesPage />} />
+        </Route>
 
         <Route
           element={
@@ -41,14 +51,13 @@ export default function App() {
             </ProtectedRoute>
           }
         >
-          <Route path="/medicines" element={<MedicinesPage />} />
           <Route path="/doctor-workspace" element={<DoctorWorkspacePage />} />
           <Route path="/doctor-workspace/:appointmentId" element={<MedicalRecordBoardPage />} />
         </Route>
 
         <Route
           element={
-            <ProtectedRoute allowedRoles={["ADMIN"]}>
+            <ProtectedRoute allowedRoles={["ADMIN", "RECEPTIONIST"]}>
               <Outlet />
             </ProtectedRoute>
           }
