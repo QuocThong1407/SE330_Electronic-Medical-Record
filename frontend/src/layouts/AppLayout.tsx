@@ -41,9 +41,29 @@ const workspaceByRole: Record<WorkspaceRole, WorkspaceMeta> = {
   },
 };
 
-const navItems: NavItem[] = [
+function getNavItems(role: WorkspaceRole): NavItem[] {
+  const shared: NavItem[] = [
     { to: "/", label: "Dashboard", icon: "dashboard" },
     { to: "/appointments", label: "Appointments", icon: "calendar" },
+  ];
+
+  if (role === "DOCTOR") {
+    return [
+      ...shared,
+      { to: "/doctor-workspace", label: "Doctor Workspace", icon: "edit" },
+      { to: "/medicines", label: "Medicines", icon: "medicines" },
+    ];
+  }
+
+  if (role === "RECEPTIONIST") {
+    return [
+      ...shared,
+      { to: "/patients", label: "Patients", icon: "patients" },
+    ];
+  }
+
+  return [
+    ...shared,
     { to: "/users", label: "Users", icon: "users" },
     { to: "/departments", label: "Departments", icon: "departments" },
     { to: "/specializations", label: "Specializations", icon: "specializations" },
@@ -51,7 +71,10 @@ const navItems: NavItem[] = [
     { to: "/patients", label: "Patients", icon: "patients" },
     { to: "/medicines", label: "Medicines", icon: "medicines" },
     { to: "/medicine-categories", label: "Medicine Categories", icon: "categories" },
+    { to: "/medical-records", label: "Medical Records", icon: "table" },
+    { to: "/icd-codes", label: "ICD Codes", icon: "categories" },
   ];
+}
 
 function getInitials(value: string) {
   return value
@@ -110,6 +133,7 @@ export function AppLayout() {
   );
 
   const roleLabel = workspace.roleLabel;
+  const navItems = useMemo(() => getNavItems(role), [role]);
 
   const handleSidebarToggle = () => {
     if (window.innerWidth >= 1024) {

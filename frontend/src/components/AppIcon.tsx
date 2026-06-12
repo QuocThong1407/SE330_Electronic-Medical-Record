@@ -24,7 +24,8 @@ export type AppIconName =
     | "play"
     | "eye"
     | "trash"
-    | "clock";
+    | "clock"
+    | "arrow";
 
 export function AppIcon({
   name,
@@ -227,6 +228,13 @@ export function AppIcon({
         <svg viewBox="0 0 24 24" className={`${className} ${common}`} strokeWidth="1.8">
           <circle cx="12" cy="12" r="10" />
           <path d="M12 6v6l4 2" />
+        </svg>
+      );
+    case "arrow":
+      return (
+        <svg viewBox="0 0 24 24" className={`${className} ${common}`} strokeWidth="1.8">
+          <path d="M5 12h14" />
+          <path d="M13 6l6 6-6 6" />
         </svg>
       );
     default:

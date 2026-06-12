@@ -12,6 +12,10 @@ import { PatientsPage } from "./pages/patients/PatientsPage";
 import { MedicinesPage } from "./pages/medicines/MedicinesPage";
 import { MedicineCategoriesPage } from "./pages/medicine-categories/MedicineCategoriesPage";
 import { AppointmentsPage } from "./pages/appointments/AppointmentsPage";
+import { DoctorWorkspacePage } from "./pages/doctor-workspace/DoctorWorkspacePage";
+import { MedicalRecordBoardPage } from "./pages/doctor-workspace/MedicalRecordBoardPage";
+import { MedicalRecordsPage } from "./pages/medical-records/MedicalRecordsPage";
+import { IcdCodesPage } from "./pages/icd-codes/IcdCodesPage";
 
 export default function App() {
   return (
@@ -32,13 +36,15 @@ export default function App() {
 
         <Route
           element={
-            <ProtectedRoute allowedRoles={["ADMIN", "DOCTOR"]}>
+            <ProtectedRoute allowedRoles={["DOCTOR"]}>
               <Outlet />
             </ProtectedRoute>
           }
         >
           <Route path="/medicines" element={<MedicinesPage />} />
-      </Route>
+          <Route path="/doctor-workspace" element={<DoctorWorkspacePage />} />
+          <Route path="/doctor-workspace/:appointmentId" element={<MedicalRecordBoardPage />} />
+        </Route>
 
         <Route
           element={
@@ -53,6 +59,8 @@ export default function App() {
           <Route path="/doctors" element={<DoctorsPage />} />
           <Route path="/patients" element={<PatientsPage />} />
           <Route path="/medicine-categories" element={<MedicineCategoriesPage />} />
+          <Route path="/medical-records" element={<MedicalRecordsPage />} />
+          <Route path="/icd-codes" element={<IcdCodesPage />} />
         </Route>
       </Route>
 
