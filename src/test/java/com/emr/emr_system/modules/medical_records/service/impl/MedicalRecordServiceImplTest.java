@@ -103,7 +103,7 @@ public class MedicalRecordServiceImplTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<MedicalRecord> page = new PageImpl<>(List.of(record));
 
-        when(medicalRecordRepository.searchMedicalRecords(eq(patientId), eq(doctorId), eq(RecordStatus.DRAFT), any(), any(), eq(pageable))).thenReturn(page);
+        when(medicalRecordRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class), eq(pageable))).thenReturn(page);
 
         Page<MedicalRecordResponse> result = medicalRecordService.getMedicalRecords(patientId, doctorId, RecordStatus.DRAFT, null, null, pageable);
 
