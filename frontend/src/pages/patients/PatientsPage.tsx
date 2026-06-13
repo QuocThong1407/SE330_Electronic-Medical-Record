@@ -57,6 +57,10 @@ type PatientFormModalProps = {
   onSubmit: (patient: Partial<PatientAdminCreateRequest>) => void;
   initialData?: Partial<PatientProfileResponse> | null;
   users: UserSummary[];
+  showUserSelect?: boolean;
+  submitLabel?: string;
+  title?: string;
+  description?: string;
 };
 
 interface PatientAdminCreateRequest {
@@ -107,6 +111,10 @@ function PatientFormModal({
   onSubmit,
   initialData,
   users,
+  showUserSelect = true,
+  submitLabel,
+  title,
+  description,
 }: PatientFormModalProps) {
   const [formData, setFormData] = useState<PatientAdminCreateRequest>({
     userId: "",
@@ -206,17 +214,19 @@ function PatientFormModal({
       <div className="relative w-full max-w-2xl overflow-hidden rounded-2xl bg-white shadow-soft ring-1 ring-slate-200">
         <div className="border-b border-slate-100 bg-slate-50/50 px-6 py-4">
           <h3 className="text-lg font-semibold text-slate-900">
-            {initialData?.id ? "Edit Patient" : "Create New Patient"}
+            {title || (initialData?.id ? "Edit Patient" : "Create New Patient")}
           </h3>
           <p className="mt-1 text-sm text-slate-500">
-            {initialData?.id
-              ? "Update patient profile details."
-              : "Create a new patient profile with complete information."}
+            {description ||
+              (initialData?.id
+                ? "Update patient profile details."
+                : "Create a new patient profile with complete information.")}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="max-h-[70vh] overflow-y-auto px-6 py-5">
           <div className="grid gap-5 sm:grid-cols-2">
+            {showUserSelect ? (
             <div className="space-y-2">
               <label
                 htmlFor="userId"
@@ -250,6 +260,7 @@ function PatientFormModal({
                   : "Select an existing user to link to this patient profile."}
               </p>
             </div>
+            ) : null}
 
             <div className="space-y-2">
               <label
@@ -548,7 +559,7 @@ function PatientFormModal({
               type="submit"
               className="h-11 w-28 rounded-xl bg-brand-700 text-sm font-semibold text-white shadow-[0_10px_20px_rgba(14,116,144,0.18)] transition hover:bg-brand-800 hover:shadow-[0_12px_24px_rgba(14,116,144,0.22)] active:scale-[0.98]"
             >
-              {initialData?.id ? "Save Changes" : "Create Patient"}
+              {submitLabel || (initialData?.id ? "Save Changes" : "Create Patient")}
             </button>
           </div>
         </form>
@@ -747,6 +758,8 @@ function PatientViewModal({ isOpen, onClose, patient }: PatientViewModalProps) {
 
 export function PatientsPage() {
   const { user } = useAuth();
+  const role = user?.role ?? "ADMIN";
+  const isReceptionist = role === "RECEPTIONIST";
   const [patients, setPatients] = useState<PatientProfileResponse[]>([]);
   const [users, setUsers] = useState<UserSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -754,12 +767,15 @@ export function PatientsPage() {
   const [sortBy, setSortBy] = useState<"name" | "date">("date");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [editingPatient, setEditingPatient] = useState<PatientProfileResponse | null>(
     null
   );
   const [viewingPatient, setViewingPatient] = useState<PatientProfileResponse | null>(
     null
   );
+  const [linkingPatient, setLinkingPatient] = useState<PatientProfileResponse | null>(null);
+  const [selectedLinkUserId, setSelectedLinkUserId] = useState("");
 
   const fetchPatients = async () => {
     try {
@@ -812,6 +828,11 @@ export function PatientsPage() {
     setIsModalOpen(true);
   };
 
+  const handleCreateWalkInPatient = () => {
+    setEditingPatient(null);
+    setIsModalOpen(true);
+  };
+
   const handleEditPatient = (patient: PatientProfileResponse) => {
     setEditingPatient(patient);
     setIsModalOpen(true);
@@ -820,6 +841,12 @@ export function PatientsPage() {
   const handleViewPatient = (patient: PatientProfileResponse) => {
     setViewingPatient(patient);
     setIsViewModalOpen(true);
+  };
+
+  const handleLinkUser = (patient: PatientProfileResponse) => {
+    setLinkingPatient(patient);
+    setSelectedLinkUserId("");
+    setIsLinkModalOpen(true);
   };
 
   const handleRefresh = () => {
@@ -869,9 +896,7 @@ export function PatientsPage() {
           )
         );
       } else {
-        // Create new patient
-        await api.post("/patients/admin", {
-          userId: patientData.userId,
+        const requestBody = {
           fullName: patientData.fullName,
           gender: patientData.gender,
           dateOfBirth: patientData.dateOfBirth || null,
@@ -887,7 +912,16 @@ export function PatientsPage() {
           emergencyContactPhone: patientData.emergencyContactPhone || null,
           emergencyContactRelation: patientData.emergencyContactRelation || null,
           notes: patientData.notes || null,
-        });
+        };
+
+        if (isReceptionist) {
+          await api.post("/patients/walk-in", requestBody);
+        } else {
+          await api.post("/patients/admin", {
+            userId: patientData.userId,
+            ...requestBody,
+          });
+        }
         const newPatient: PatientProfileResponse = {
           id: "",
           patientCode: "",
@@ -915,6 +949,30 @@ export function PatientsPage() {
     } catch (error: any) {
       console.error("Failed to save patient:", error);
       alert(error.response?.data?.message || "Failed to save patient");
+    }
+  };
+
+  const handleLinkUserSubmit = async () => {
+    if (!linkingPatient) {
+      return;
+    }
+
+    if (!selectedLinkUserId) {
+      alert("Please select a user to link.");
+      return;
+    }
+
+    try {
+      await api.patch(`/patients/${linkingPatient.id}/link-user`, {
+        userId: selectedLinkUserId,
+      });
+      await fetchPatients();
+      setIsLinkModalOpen(false);
+      setLinkingPatient(null);
+      setSelectedLinkUserId("");
+    } catch (error: any) {
+      console.error("Failed to link user:", error);
+      alert(error.response?.data?.message || "Failed to link patient user");
     }
   };
 
@@ -1093,11 +1151,11 @@ export function PatientsPage() {
           </div>
 
           <button
-            onClick={handleCreatePatient}
+            onClick={isReceptionist ? handleCreateWalkInPatient : handleCreatePatient}
             className="flex h-11 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 text-sm font-semibold text-white shadow-[0_10px_20px_rgba(5,150,105,0.18)] transition hover:bg-emerald-800 hover:shadow-[0_12px_24px_rgba(5,150,105,0.22)] active:scale-[0.98]"
           >
             <AppIcon name="patients" className="h-5 w-5" />
-            <span>Add Patient</span>
+            <span>{isReceptionist ? "Add Walk-in" : "Add Patient"}</span>
           </button>
         </div>
       </div>
@@ -1210,13 +1268,24 @@ export function PatientsPage() {
                         >
                           <AppIcon name="profile" className="h-4 w-4" />
                         </button>
-                        <button
-                          onClick={() => handleDeletePatient(patient.id)}
-                          className="rounded-lg p-2 text-slate-500 transition hover:bg-red-50 hover:text-red-600"
-                          title="Delete patient"
-                        >
-                          <AppIcon name="logout" className="h-4 w-4" />
-                        </button>
+                        {isReceptionist && !patient.userId ? (
+                          <button
+                            onClick={() => handleLinkUser(patient)}
+                            className="rounded-lg p-2 text-slate-500 transition hover:bg-emerald-50 hover:text-emerald-600"
+                            title="Link user account"
+                          >
+                            <AppIcon name="users" className="h-4 w-4" />
+                          </button>
+                        ) : null}
+                        {!isReceptionist ? (
+                          <button
+                            onClick={() => handleDeletePatient(patient.id)}
+                            className="rounded-lg p-2 text-slate-500 transition hover:bg-red-50 hover:text-red-600"
+                            title="Delete patient"
+                          >
+                            <AppIcon name="logout" className="h-4 w-4" />
+                          </button>
+                        ) : null}
                       </div>
                     </td>
                   </tr>
@@ -1246,6 +1315,14 @@ export function PatientsPage() {
         onSubmit={handleFormSubmit}
         initialData={editingPatient}
         users={users}
+        showUserSelect={!isReceptionist}
+        title={isReceptionist && !editingPatient ? "Create Walk-in Patient" : undefined}
+        description={
+          isReceptionist && !editingPatient
+            ? "Create a walk-in patient profile without linking a user account."
+            : undefined
+        }
+        submitLabel={isReceptionist && !editingPatient ? "Create Walk-in" : undefined}
       />
 
       {/* View Modal */}
@@ -1254,6 +1331,65 @@ export function PatientsPage() {
         onClose={() => setIsViewModalOpen(false)}
         patient={viewingPatient}
       />
+
+      {isLinkModalOpen && linkingPatient ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-slate-950/25 backdrop-blur-sm transition-opacity"
+            onClick={() => setIsLinkModalOpen(false)}
+          />
+          <div className="relative w-full max-w-xl overflow-hidden rounded-2xl bg-white shadow-soft ring-1 ring-slate-200">
+            <div className="border-b border-slate-100 bg-slate-50/50 px-6 py-4">
+              <h3 className="text-lg font-semibold text-slate-900">Link user account</h3>
+              <p className="mt-1 text-sm text-slate-500">
+                Link an existing patient user account to {linkingPatient.fullName}.
+              </p>
+            </div>
+
+            <div className="px-6 py-5">
+              <label className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                User account
+              </label>
+              <select
+                value={selectedLinkUserId}
+                onChange={(e) => setSelectedLinkUserId(e.target.value)}
+                className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm outline-none transition focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-100"
+              >
+                <option value="">Select patient user</option>
+                {users
+                  .filter((item) => item.role === "PATIENT" && !item.patientProfile)
+                  .map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.email}
+                    </option>
+                  ))}
+              </select>
+              <p className="mt-2 text-xs text-slate-500">
+                Only unlinked users with role PATIENT are shown here.
+              </p>
+            </div>
+
+            <div className="border-t border-slate-100 px-6 py-4">
+              <div className="flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsLinkModalOpen(false)}
+                  className="h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleLinkUserSubmit}
+                  className="h-10 rounded-xl bg-brand-700 px-4 text-sm font-semibold text-white hover:bg-brand-800"
+                >
+                  Link user
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }

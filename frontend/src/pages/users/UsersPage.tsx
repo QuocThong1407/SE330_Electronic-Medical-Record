@@ -471,6 +471,7 @@ export function UsersPage() {
   const [viewingUser, setViewingUser] = useState<UserAdminResponse | null>(
     null,
   );
+  const isAdmin = user?.role === "ADMIN";
 
   const fetchUsers = async () => {
     try {
@@ -915,13 +916,15 @@ export function UsersPage() {
                         >
                           <AppIcon name="profile" className="h-4 w-4" />
                         </button>
-                        <button
-                          onClick={() => handleDeleteUser(user.id)}
-                          className="rounded-lg p-2 text-slate-500 transition hover:bg-red-50 hover:text-red-600"
-                          title="Delete user"
-                        >
-                          <AppIcon name="logout" className="h-4 w-4" />
-                        </button>
+                        {isAdmin && (
+                          <button
+                            onClick={() => handleDeleteUser(user.id)}
+                            className="rounded-lg p-2 text-slate-500 transition hover:bg-red-50 hover:text-red-600"
+                            title="Delete user"
+                          >
+                            <AppIcon name="logout" className="h-4 w-4" />
+                          </button>
+                          )}
                       </div>
                     </td>
                   </tr>

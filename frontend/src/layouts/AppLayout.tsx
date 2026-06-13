@@ -58,6 +58,7 @@ function getNavItems(role: WorkspaceRole): NavItem[] {
   if (role === "RECEPTIONIST") {
     return [
       ...shared,
+      { to: "/users", label: "Users", icon: "users" },
       { to: "/patients", label: "Patients", icon: "patients" },
       { to: "/doctors", label: "Doctors", icon: "doctors" },
       { to: "/specializations", label: "Specializations", icon: "specializations" },

@@ -33,11 +33,13 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
     public ApiResponse<UserAdminResponse> create(@Valid @RequestBody UserAdminCreateRequest request) {
         return ApiResponse.success(userService.create(request), "User created successfully");
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
     public ApiResponse<List<UserAdminResponse>> getAll(
             @RequestParam(required = false) RoleName role,
             @RequestParam(required = false) Boolean active
@@ -46,11 +48,13 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
     public ApiResponse<UserAdminResponse> getById(@PathVariable UUID id) {
         return ApiResponse.success(userService.getById(id), "User retrieved successfully");
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
     public ApiResponse<UserAdminResponse> update(
             @PathVariable UUID id,
             @Valid @RequestBody UserAdminUpdateRequest request
@@ -59,6 +63,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/status")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
     public ApiResponse<UserAdminResponse> updateStatus(
             @PathVariable UUID id,
             @Valid @RequestBody UserStatusUpdateRequest request

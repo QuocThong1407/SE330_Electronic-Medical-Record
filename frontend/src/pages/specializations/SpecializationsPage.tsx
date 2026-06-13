@@ -3,6 +3,7 @@ import { AppIcon } from "../../components/AppIcon";
 import { api } from "../../lib/api";
 import { getSpecializations } from "../../services/resourceService";
 import type { Specialization } from "../../types/catalog";
+import { useAuth } from "../../contexts/AuthContext";
 
 type SpecializationFormModalProps = {
   isOpen: boolean;
@@ -259,6 +260,9 @@ export function SpecializationsPage() {
   const [viewingSpecialization, setViewingSpecialization] =
     useState<Specialization | null>(null);
 
+  const { user } = useAuth();
+  const isAdmin = user?.role === "ADMIN";
+
   const fetchSpecializations = async () => {
     try {
       const specializationsData = await getSpecializations();
@@ -451,13 +455,15 @@ export function SpecializationsPage() {
             </button>
           </div>
 
-          <button
-            onClick={handleCreateSpecialization}
-            className="flex h-11 items-center justify-center gap-2 rounded-xl bg-teal-700 px-5 text-sm font-semibold text-white shadow-[0_10px_20px_rgba(20,184,166,0.18)] transition hover:bg-teal-800 hover:shadow-[0_12px_24px_rgba(20,184,166,0.22)] active:scale-[0.98]"
-          >
-            <AppIcon name="specializations" className="h-5 w-5" />
-            <span>Add Specialization</span>
-          </button>
+          {isAdmin && (
+            <button
+              onClick={handleCreateSpecialization}
+              className="flex h-11 items-center justify-center gap-2 rounded-xl bg-teal-700 px-5 text-sm font-semibold text-white shadow-[0_10px_20px_rgba(20,184,166,0.18)] transition hover:bg-teal-800 hover:shadow-[0_12px_24px_rgba(20,184,166,0.22)] active:scale-[0.98]"
+            >
+              <AppIcon name="specializations" className="h-5 w-5" />
+              <span>Add Specialization</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -558,20 +564,25 @@ export function SpecializationsPage() {
                         >
                           <AppIcon name="menu" className="h-4 w-4" />
                         </button>
-                        <button
-                          onClick={() => handleEditSpecialization(specialization)}
-                          className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-teal-600"
-                          title="Edit specialization"
-                        >
-                          <AppIcon name="profile" className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteSpecialization(specialization.id)}
-                          className="rounded-lg p-2 text-slate-500 transition hover:bg-red-50 hover:text-red-600"
-                          title="Delete specialization"
-                        >
-                          <AppIcon name="logout" className="h-4 w-4" />
-                        </button>
+
+                        {isAdmin && (
+                          <>
+                            <button
+                              onClick={() => handleEditSpecialization(specialization)}
+                              className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-teal-600"
+                              title="Edit specialization"
+                            >
+                              <AppIcon name="profile" className="h-4 w-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteSpecialization(specialization.id)}
+                              className="rounded-lg p-2 text-slate-500 transition hover:bg-red-50 hover:text-red-600"
+                              title="Delete specialization"
+                            >
+                              <AppIcon name="logout" className="h-4 w-4" />
+                            </button>
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>

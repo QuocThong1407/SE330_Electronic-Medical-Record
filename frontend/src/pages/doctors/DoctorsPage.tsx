@@ -673,6 +673,8 @@ export function DoctorsPage() {
   const [viewingDoctor, setViewingDoctor] =
     useState<DoctorProfileResponse | null>(null);
 
+  const isAdmin = user?.role === "ADMIN";
+
   const fetchDoctors = async () => {
     try {
       const [doctorsData, departmentsData, specializationsData, usersData] = await Promise.all([
@@ -965,13 +967,15 @@ export function DoctorsPage() {
               </div>
             </div>
           </div>
-          <button
-            onClick={handleCreateDoctor}
-            className="flex h-11 items-center justify-center gap-2 rounded-xl bg-indigo-700 px-5 text-sm font-semibold text-white shadow-[0_10px_20px_rgba(79,70,229,0.18)] transition hover:bg-indigo-800 hover:shadow-[0_12px_24px_rgba(79,70,229,0.22)] active:scale-[0.98]"
-          >
-            <AppIcon name="doctors" className="h-5 w-5" />
-            <span>Add Doctor</span>
-          </button>
+          {isAdmin && (
+            <button
+              onClick={handleCreateDoctor}
+              className="flex h-11 items-center justify-center gap-2 rounded-xl bg-indigo-700 px-5 text-sm font-semibold text-white shadow-[0_10px_20px_rgba(79,70,229,0.18)] transition hover:bg-indigo-800 hover:shadow-[0_12px_24px_rgba(79,70,229,0.22)] active:scale-[0.98]"
+            >
+              <AppIcon name="doctors" className="h-5 w-5" />
+              <span>Add Doctor</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -1084,20 +1088,24 @@ export function DoctorsPage() {
                         >
                           <AppIcon name="menu" className="h-4 w-4" />
                         </button>
-                        <button
-                          onClick={() => handleEditDoctor(doctor)}
-                          className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-indigo-600"
-                          title="Edit doctor"
-                        >
-                          <AppIcon name="profile" className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteDoctor(doctor.id)}
-                          className="rounded-lg p-2 text-slate-500 transition hover:bg-red-50 hover:text-red-600"
-                          title="Delete doctor"
-                        >
-                          <AppIcon name="logout" className="h-4 w-4" />
-                        </button>
+                        {isAdmin && (
+                          <>
+                            <button
+                              onClick={() => handleEditDoctor(doctor)}
+                              className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-indigo-600"
+                              title="Edit doctor"
+                            >
+                              <AppIcon name="profile" className="h-4 w-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteDoctor(doctor.id)}
+                              className="rounded-lg p-2 text-slate-500 transition hover:bg-red-50 hover:text-red-600"
+                              title="Delete doctor"
+                            >
+                              <AppIcon name="logout" className="h-4 w-4" />
+                            </button>
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>
