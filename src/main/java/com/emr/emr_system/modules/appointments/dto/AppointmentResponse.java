@@ -30,4 +30,42 @@ public class AppointmentResponse {
     private LocalDateTime confirmedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    
+    // Nested objects for frontend convenience
+    private PatientInfo patient;
+    private DoctorInfo doctor;
+    private DepartmentInfo department;
+    
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PatientInfo {
+        private UUID id;
+        private String patientCode;
+        private String fullName;
+        private String phone;
+    }
+    
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DoctorInfo {
+        private UUID id;
+        private String doctorCode;
+        private String fullName;
+        private UUID departmentId;
+        private String departmentName;
+    }
+    
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DepartmentInfo {
+        private UUID id;
+        private String code;
+        private String name;
+    }
 }

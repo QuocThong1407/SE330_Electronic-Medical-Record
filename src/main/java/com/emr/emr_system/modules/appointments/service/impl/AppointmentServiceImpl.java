@@ -3,12 +3,21 @@ package com.emr.emr_system.modules.appointments.service.impl;
 import com.emr.emr_system.modules.appointments.dto.AppointmentCancelRequest;
 import com.emr.emr_system.modules.appointments.dto.AppointmentCreateRequest;
 import com.emr.emr_system.modules.appointments.dto.AppointmentResponse;
+import com.emr.emr_system.modules.appointments.dto.AppointmentResponse.DoctorInfo;
+import com.emr.emr_system.modules.appointments.dto.AppointmentResponse.DepartmentInfo;
+import com.emr.emr_system.modules.appointments.dto.AppointmentResponse.PatientInfo;
 import com.emr.emr_system.modules.appointments.dto.AppointmentUpdateRequest;
 import com.emr.emr_system.modules.appointments.dto.AvailableSlotsResponse;
 import com.emr.emr_system.modules.appointments.entity.Appointment;
 import com.emr.emr_system.modules.appointments.entity.AppointmentStatus;
 import com.emr.emr_system.modules.appointments.repository.AppointmentRepository;
 import com.emr.emr_system.modules.appointments.service.AppointmentService;
+import com.emr.emr_system.modules.department.entity.Department;
+import com.emr.emr_system.modules.department.repository.DepartmentRepository;
+import com.emr.emr_system.modules.doctor.entity.DoctorProfile;
+import com.emr.emr_system.modules.doctor.repository.DoctorProfileRepository;
+import com.emr.emr_system.modules.patient.entity.PatientProfile;
+import com.emr.emr_system.modules.patient.repository.PatientProfileRepository;
 import com.emr.emr_system.shared.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,11 +31,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentRepository appointmentRepository;
+    private final PatientProfileRepository patientProfileRepository;
+    private final DoctorProfileRepository doctorProfileRepository;
+    private final DepartmentRepository departmentRepository;
     private static final List<AppointmentStatus> ACTIVE_STATUSES = List.of(
             AppointmentStatus.PENDING,
             AppointmentStatus.CONFIRMED,
@@ -50,8 +63,9 @@ public class AppointmentServiceImpl implements AppointmentService {
             endTime = date.plusDays(1).atStartOfDay().minusNanos(1);
         }
 
-        return appointmentRepository
-                .searchAppointments(doctorId, patientId, status, startTime, endTime, pageable)
+        return (date != null
+                ? appointmentRepository.searchAppointmentsWithDate(doctorId, patientId, status, startTime, endTime, pageable)
+                : appointmentRepository.searchAppointmentsWithoutDate(doctorId, patientId, status, pageable))
                 .map(this::toResponse);
     }
 
@@ -235,11 +249,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             slot = slotEnd;
         }
 
-        return AvailableSlotsResponse.builder()
-                .doctorId(doctorId)
-                .date(date)
-                .availableSlots(availableSlots)
-                .build();
+        return AvailableSlotsResponse.fromTimeSlots(doctorId, date, availableSlots);
     }
 
     private Appointment getAppointmentOrThrow(UUID id) {
@@ -248,6 +258,21 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     private AppointmentResponse toResponse(Appointment appointment) {
+        // Fetch related entities
+        PatientProfile patient = null;
+        DoctorProfile doctor = null;
+        Department department = null;
+        
+        if (appointment.getPatientId() != null) {
+            patient = patientProfileRepository.findById(appointment.getPatientId()).orElse(null);
+        }
+        if (appointment.getDoctorId() != null) {
+            doctor = doctorProfileRepository.findById(appointment.getDoctorId()).orElse(null);
+        }
+        if (appointment.getDepartmentId() != null) {
+            department = departmentRepository.findById(appointment.getDepartmentId()).orElse(null);
+        }
+        
         return AppointmentResponse.builder()
                 .id(appointment.getId())
                 .appointmentNo(appointment.getAppointmentNo())
@@ -265,6 +290,24 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .confirmedAt(appointment.getConfirmedAt())
                 .createdAt(appointment.getCreatedAt())
                 .updatedAt(appointment.getUpdatedAt())
+                .patient(patient != null ? PatientInfo.builder()
+                        .id(patient.getId())
+                        .patientCode(patient.getPatientCode())
+                        .fullName(patient.getFullName())
+                        .phone(patient.getPhone())
+                        .build() : null)
+                .doctor(doctor != null ? DoctorInfo.builder()
+                        .id(doctor.getId())
+                        .doctorCode(doctor.getEmployeeCode())
+                        .fullName(doctor.getFullName())
+                        .departmentId(doctor.getDepartmentId())
+                        .departmentName(department != null ? department.getName() : null)
+                        .build() : null)
+                .department(department != null ? DepartmentInfo.builder()
+                        .id(department.getId())
+                        .code(department.getCode())
+                        .name(department.getName())
+                        .build() : null)
                 .build();
     }
 

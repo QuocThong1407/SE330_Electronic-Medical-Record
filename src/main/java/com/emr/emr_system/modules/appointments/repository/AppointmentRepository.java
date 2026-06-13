@@ -20,14 +20,26 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
 				WHERE (:doctorId IS NULL OR a.doctorId = :doctorId)
 					AND (:patientId IS NULL OR a.patientId = :patientId)
 					AND (:status IS NULL OR a.status = :status)
-					AND (:startTime IS NULL OR :endTime IS NULL OR a.appointmentTime BETWEEN :startTime AND :endTime)
 				""")
-		Page<Appointment> searchAppointments(   @Param("doctorId") UUID doctorId,
-								            @Param("patientId") UUID patientId,
-												@Param("status") AppointmentStatus status,
-												@Param("startTime") LocalDateTime startTime,
-												@Param("endTime") LocalDateTime endTime,
-												Pageable pageable);
+		Page<Appointment> searchAppointmentsWithoutDate(@Param("doctorId") UUID doctorId,
+											 @Param("patientId") UUID patientId,
+											 @Param("status") AppointmentStatus status,
+											 Pageable pageable);
+
+		@Query("""
+				SELECT a
+				FROM Appointment a
+				WHERE (:doctorId IS NULL OR a.doctorId = :doctorId)
+					AND (:patientId IS NULL OR a.patientId = :patientId)
+					AND (:status IS NULL OR a.status = :status)
+					AND a.appointmentTime BETWEEN :startTime AND :endTime
+				""")
+		Page<Appointment> searchAppointmentsWithDate(@Param("doctorId") UUID doctorId,
+												 @Param("patientId") UUID patientId,
+												 @Param("status") AppointmentStatus status,
+												 @Param("startTime") LocalDateTime startTime,
+												 @Param("endTime") LocalDateTime endTime,
+												 Pageable pageable);
 
 	    List<Appointment> findByDoctorIdAndAppointmentTimeBetweenAndStatusIn(   UUID doctorId,
 																			    LocalDateTime startTime,

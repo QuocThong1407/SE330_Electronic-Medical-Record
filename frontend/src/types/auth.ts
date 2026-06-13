@@ -1,5 +1,11 @@
 export type RoleName = "ADMIN" | "DOCTOR" | "RECEPTIONIST" | "PATIENT";
 
+export interface LinkedProfileResponse {
+  id: string;
+  code: string;
+  fullName: string;
+}
+
 export interface UserSummary {
   id: string;
   email: string;
@@ -7,6 +13,8 @@ export interface UserSummary {
   active: boolean;
   createdAt?: string;
   updatedAt?: string;
+  doctorProfile?: LinkedProfileResponse | null;
+  patientProfile?: LinkedProfileResponse | null;
 }
 
 export interface AuthResponse {

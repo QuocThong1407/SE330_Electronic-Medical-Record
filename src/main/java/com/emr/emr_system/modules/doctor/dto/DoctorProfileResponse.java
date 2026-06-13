@@ -2,6 +2,7 @@ package com.emr.emr_system.modules.doctor.dto;
 
 import com.emr.emr_system.modules.doctor.entity.DoctorProfile;
 import com.emr.emr_system.shared.enums.Gender;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
 
@@ -23,7 +24,11 @@ public class DoctorProfileResponse {
     private String degree;
     private Integer experienceYears;
     private LocalDate dateOfBirth;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
     public static DoctorProfileResponse from(DoctorProfile profile) {

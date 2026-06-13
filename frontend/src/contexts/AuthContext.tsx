@@ -1,14 +1,14 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { login as loginRequest, me as meRequest } from "@/services/authService";
-import { storage } from "@/lib/storage";
-import type { UserSummary } from "@/types/auth";
+import { login as loginRequest, me as meRequest } from "../services/authService";
+import { storage } from "../lib/storage";
+import type { UserSummary } from "../types/auth";
 
 interface AuthContextValue {
   user: UserSummary | null;
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, remember?: boolean) => Promise<void>;
   logout: () => void;
   refreshMe: () => Promise<void>;
 }
@@ -31,6 +31,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       try {
         await refreshMeInternal();
+      } catch {
+        storage.clearToken();
+        setToken(null);
+        setUser(null);
       } finally {
         setIsLoading(false);
       }
@@ -44,9 +48,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(current);
   };
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string, remember = true) => {
     const response = await loginRequest(email, password);
-    storage.setToken(response.accessToken);
+    storage.setToken(response.accessToken, remember);
     setToken(response.accessToken);
     setUser(response.user);
   };
