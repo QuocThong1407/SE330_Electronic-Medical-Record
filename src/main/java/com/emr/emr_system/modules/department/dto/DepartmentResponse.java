@@ -1,6 +1,7 @@
 package com.emr.emr_system.modules.department.dto;
 
 import com.emr.emr_system.modules.department.entity.Department;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,7 +18,11 @@ public class DepartmentResponse {
     private String location;
     private String phoneExt;
     private Boolean active;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
     public static DepartmentResponse from(Department department) {

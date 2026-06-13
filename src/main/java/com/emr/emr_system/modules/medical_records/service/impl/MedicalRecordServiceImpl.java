@@ -14,9 +14,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.data.jpa.domain.Specification;
+import jakarta.persistence.criteria.Predicate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.UUID;
 
@@ -42,9 +46,31 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
             ? toDate.plusDays(1).atStartOfDay().minusNanos(1)
             : null;
 
-        return medicalRecordRepository
-            .searchMedicalRecords(patientId, doctorId, status, startTime, endTime, pageable)
-            .map(this::toResponse);
+        Specification<MedicalRecord> specification = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (patientId != null) {
+                predicates.add(criteriaBuilder.equal(root.get("patientId"), patientId));
+            }
+            if (doctorId != null) {
+                predicates.add(criteriaBuilder.equal(root.get("doctorId"), doctorId));
+            }
+            if (status == null) {
+                predicates.add(criteriaBuilder.notEqual(root.get("status"), RecordStatus.ARCHIVED));
+            } else {
+                predicates.add(criteriaBuilder.equal(root.get("status"), status));
+            }
+            if (startTime != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("visitDate"), startTime));
+            }
+            if (endTime != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("visitDate"), endTime));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        return medicalRecordRepository.findAll(specification, pageable).map(this::toResponse);
     }
 
     @Override

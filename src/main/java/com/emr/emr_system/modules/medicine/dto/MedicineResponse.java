@@ -2,6 +2,7 @@ package com.emr.emr_system.modules.medicine.dto;
 
 import com.emr.emr_system.modules.medicine.entity.Medicine;
 import com.emr.emr_system.shared.enums.MedicineUnit;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
 
@@ -25,7 +26,11 @@ public class MedicineResponse {
     private BigDecimal price;
     private Integer stockQuantity;
     private Boolean isActive;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
     public static MedicineResponse from(Medicine medicine, String categoryName) {

@@ -2,6 +2,7 @@ package com.emr.emr_system.modules.patient.dto;
 
 import com.emr.emr_system.modules.patient.entity.PatientProfile;
 import com.emr.emr_system.shared.enums.Gender;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
 
@@ -30,7 +31,11 @@ public class PatientProfileResponse {
     private String emergencyContactPhone;
     private String emergencyContactRelation;
     private String notes;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
     public static PatientProfileResponse from(PatientProfile profile) {
