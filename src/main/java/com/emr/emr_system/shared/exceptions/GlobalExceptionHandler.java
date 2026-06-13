@@ -45,8 +45,8 @@ public class GlobalExceptionHandler {
     /**
      * Handle bad request error (400 Bad Request)
      */
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ApiResponse<Object>> handleBadRequestException(BadRequestException ex) {
+    @ExceptionHandler({BadRequestException.class, IllegalArgumentException.class, IllegalStateException.class})
+    public ResponseEntity<ApiResponse<Object>> handleBadRequestException(RuntimeException ex) {
         log.error("Bad request: {}", ex.getMessage());
 
         ApiResponse<Object> response = ApiResponse.error(ex.getMessage());
