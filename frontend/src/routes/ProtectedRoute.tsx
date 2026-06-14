@@ -1,6 +1,7 @@
 import { Navigate, useLocation, Outlet } from "react-router-dom";
 import type { ReactNode } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import { UnauthorizedPage } from "../pages/auth/UnauthorizedPage";
 
 type ProtectedRouteProps = {
   children: ReactNode;
@@ -26,9 +27,9 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
-  if (allowedRoles && user?.role && !allowedRoles.includes(user.role as any)) {
-    return <Navigate to="/" replace />;
-  }
+   if (allowedRoles && user?.role && !allowedRoles.includes(user.role as any)) {
+     return <UnauthorizedPage />;
+   }
 
   return children ? <>{children}</> : <Outlet />;
 }
