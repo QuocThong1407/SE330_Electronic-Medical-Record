@@ -63,6 +63,40 @@ public class IcdCodeServiceImpl implements IcdCodeService {
         return toResponse(saved);
     }
 
+    @Override
+    public IcdCodeResponse updateIcdCode(String id, IcdCodeCreateRequest request) {
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException("id is required");
+        }
+        if (request == null) {
+            throw new IllegalArgumentException("Request body is required");
+        }
+        if (request.getName() == null || request.getName().isBlank()) {
+            throw new IllegalArgumentException("name is required");
+        }
+
+        IcdCode icdCode = icdCodeRepository.findById(id.trim())
+                .orElseThrow(() -> new ResourceNotFoundException("IcdCode", "id", id));
+
+        icdCode.setName(request.getName().trim());
+        icdCode.setCategory(request.getCategory());
+        icdCode.setDescription(request.getDescription());
+
+        IcdCode saved = icdCodeRepository.save(icdCode);
+        return toResponse(saved);
+    }
+
+    @Override
+    public void deleteIcdCode(String id) {
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException("id is required");
+        }
+
+        IcdCode icdCode = icdCodeRepository.findById(id.trim())
+                .orElseThrow(() -> new ResourceNotFoundException("IcdCode", "id", id));
+        icdCodeRepository.delete(icdCode);
+    }
+
     private IcdCodeResponse toResponse(IcdCode icdCode) {
         return IcdCodeResponse.builder()
                 .id(icdCode.getId())

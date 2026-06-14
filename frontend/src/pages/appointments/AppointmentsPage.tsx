@@ -346,58 +346,7 @@ export function AppointmentsPage() {
         );
       }
     } else if (role === "DOCTOR") {
-      if (appointment.status === "PENDING") {
-        actions.push(
-          <button
-            key="confirm"
-            onClick={() => handleStatusChange(appointment, "CONFIRMED")}
-            className="inline-flex items-center gap-1 rounded-lg bg-emerald-50 px-2.5 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100 transition"
-            title="Confirm appointment"
-          >
-            <AppIcon name="check" className="h-3.5 w-3.5" />
-            Confirm
-          </button>
-        );
-        actions.push(
-          <button
-            key="cancel"
-            onClick={() => {
-              setSelectedAppointment(appointment);
-              setShowCancelModal(true);
-            }}
-            className="inline-flex items-center gap-1 rounded-lg bg-red-50 px-2.5 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100 transition"
-            title="Cancel appointment"
-          >
-            <AppIcon name="logout" className="h-3.5 w-3.5" />
-            Cancel
-          </button>
-        );
-      } else if (appointment.status === "CONFIRMED") {
-        actions.push(
-          <button
-            key="start"
-            onClick={() => handleStatusChange(appointment, "IN_PROGRESS")}
-            className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-2.5 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 transition"
-            title="Start examination"
-          >
-            <AppIcon name="play" className="h-3.5 w-3.5" />
-            Start
-          </button>
-        );
-      } else if (appointment.status === "IN_PROGRESS") {
-        actions.push(
-          <button
-            key="complete"
-            onClick={() => handleStatusChange(appointment, "COMPLETED")}
-            className="inline-flex items-center gap-1 rounded-lg bg-emerald-50 px-2.5 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100 transition"
-            title="Complete appointment"
-          >
-            <AppIcon name="check" className="h-3.5 w-3.5" />
-            Complete
-          </button>
-        );
-      } else if (appointment.status === "COMPLETED") {
-        actions.push(
+      actions.push(
           <button
             key="view"
             onClick={() => {
@@ -411,7 +360,6 @@ export function AppointmentsPage() {
             View Details
           </button>
         );
-      }
     } else if (role === "ADMIN") {
       actions.push(
         <button
@@ -927,7 +875,7 @@ export function AppointmentsPage() {
                     onChange={(e) => setBookingForm((prev) => ({ ...prev, reason: e.target.value }))}
                     placeholder="Enter reason for visit..."
                     rows={3}
-                    className="h-24 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-100"
+                    className="h-24 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-100"
                   />
                 </div>
               </div>
@@ -1090,12 +1038,12 @@ export function AppointmentsPage() {
             </div>
             <div className="border-t border-slate-100 bg-slate-50/50 px-6 py-4">
               <div className="flex items-center justify-end gap-3">
-                {selectedAppointment.status === "PENDING" && (
+                {role === 'ADMIN' && selectedAppointment.status === "PENDING" && (
                   <button
                     onClick={() => handleDeleteAppointment(selectedAppointment)}
                     className="h-11 w-32 rounded-xl bg-red-600 text-sm font-semibold text-white shadow-[0_10px_20px_rgba(220,38,38,0.18)] transition hover:bg-red-700 hover:shadow-[0_12px_24px_rgba(220,38,38,0.22)] active:scale-[0.98]"
                   >
-                    Delete Appointment
+                    Delete
                   </button>
                 )}
                 <button

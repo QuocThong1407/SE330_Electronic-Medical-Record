@@ -244,17 +244,30 @@ function UserFormModal({
             </div>
           </div>
 
-          <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-3">
+          <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-3 mt-4">
             <label className="relative flex cursor-pointer items-center gap-3">
-              <input
-                id="active"
-                name="active"
-                type="checkbox"
-                checked={formData.active}
-                onChange={handleChange}
-                className="peer h-5 w-5 appearance-none rounded-md border border-slate-300 bg-white transition checked:border-brand-500 checked:bg-brand-50 checked:ring-4 checked:ring-brand-100"
-              />
-              <span className="text-sm font-medium text-slate-700 peer-checked:text-slate-900">
+              <div className="relative flex h-5 w-5 shrink-0 items-center justify-center">
+                <input
+                  id="active"
+                  name="active"
+                  type="checkbox"
+                  checked={formData.active ?? true}
+                  onChange={handleChange}
+                  className="peer h-5 w-5 appearance-none rounded-md border border-slate-300 bg-white transition-all checked:border-slate-500 checked:ring-4 checked:ring-brand-100 outline-none"
+                />
+                
+                <svg
+                  viewBox="0 0 24 24"
+                  className="pointer-events-none absolute h-3.5 w-3.5 fill-none stroke-slate-950 opacity-0 transition-opacity duration-200 peer-checked:opacity-100"
+                  strokeWidth="3.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M20 6L9 17l-5-5" />
+                </svg>
+              </div>
+
+              <span className="text-sm font-medium text-slate-700 select-none peer-checked:text-slate-900">
                 Active Account
               </span>
             </label>
@@ -914,7 +927,7 @@ export function UsersPage() {
                           className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-brand-600"
                           title="Edit user"
                         >
-                          <AppIcon name="profile" className="h-4 w-4" />
+                          <AppIcon name="edit" className="h-[14px] w-[14px]" />
                         </button>
                         {isAdmin && (
                           <button

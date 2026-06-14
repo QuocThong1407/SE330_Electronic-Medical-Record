@@ -11,4 +11,8 @@ public interface IcdCodeService {
     IcdCodeResponse getIcdCodeById(String id);
 
     IcdCodeResponse createIcdCode(IcdCodeCreateRequest request);
+
+    IcdCodeResponse updateIcdCode(String id, IcdCodeCreateRequest request);
+
+    void deleteIcdCode(String id);
 }

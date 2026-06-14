@@ -543,7 +543,7 @@ export function MedicineCategoriesPage() {
                           className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-emerald-600"
                           title="Edit category"
                         >
-                          <AppIcon name="profile" className="h-4 w-4" />
+                          <AppIcon name="edit" className="h-[14px] w-[14px]" />
                         </button>
                         <button
                           onClick={() => handleDeleteCategory(category.id)}

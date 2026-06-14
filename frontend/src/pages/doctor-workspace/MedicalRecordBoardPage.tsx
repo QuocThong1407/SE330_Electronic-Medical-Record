@@ -315,13 +315,9 @@ export function MedicalRecordBoardPage() {
   useEffect(() => {
     let active = true;
     const keyword = icdQuery.trim();
-    if (!keyword) {
-      setIcdResults([]);
-      return;
-    }
 
     const timer = window.setTimeout(async () => {
-      const results = await searchIcdCodes(keyword).catch(() => []);
+      const results = await searchIcdCodes(keyword || undefined).catch(() => []);
       if (active) setIcdResults(results);
     }, 350);
 
@@ -718,8 +714,9 @@ export function MedicalRecordBoardPage() {
           ) : null}
 
           {canEditBoard && icdResults.length > 0 ? (
-            <div className="mt-3 grid gap-2">
-              {icdResults.slice(0, 8).map((item) => (
+            <div className="mt-3 max-h-72 overflow-y-auto rounded-2xl border border-slate-200 bg-slate-50 p-2">
+              <div className="grid gap-2">
+              {icdResults.map((item) => (
                 <button
                   key={item.id}
                   type="button"
@@ -732,6 +729,7 @@ export function MedicalRecordBoardPage() {
                   <div className="text-xs text-slate-500">{item.category || "ICD"}</div>
                 </button>
               ))}
+              </div>
             </div>
           ) : null}
 
