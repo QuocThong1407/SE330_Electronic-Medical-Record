@@ -117,6 +117,18 @@ export async function createIcdCode(payload: { id: string; name: string; categor
   return data.data;
 }
 
+export async function updateIcdCode(
+  id: string,
+  payload: { name: string; category?: string | null; description?: string | null }
+): Promise<IcdCode> {
+  const { data } = await api.put<ApiResponse<IcdCode>>(`/icd-codes/${id}`, payload);
+  return data.data;
+}
+
+export async function deleteIcdCode(id: string): Promise<void> {
+  await api.delete(`/icd-codes/${id}`);
+}
+
 export async function searchPrescriptions(params: PrescriptionSearchParams = {}): Promise<PrescriptionSummary[]> {
   const { data } = await api.get<ApiResponse<any>>("/prescriptions", {
     params: {

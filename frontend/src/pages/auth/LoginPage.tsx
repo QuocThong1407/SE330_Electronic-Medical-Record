@@ -139,15 +139,6 @@ export function LoginPage() {
               />
               <span>Remember session</span>
             </label>
-
-            <button
-              className="text-sm font-semibold text-brand-700 transition hover:text-brand-800 hover:underline"
-              type="button"
-              title="Password reset is not enabled"
-              onClick={() => undefined}
-            >
-              Forgot Password?
-            </button>
           </div>
 
           {error ? (

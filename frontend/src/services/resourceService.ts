@@ -77,7 +77,7 @@ export async function updateMedicineStatus(id: string, data: any) {
 }
 
 export async function addMedicineStock(id: string, data: any) {
-  const { data: response } = await api.put<ApiResponse<Medicine>>(`/medicines/${id}/stock`, data);
+  const { data: response } = await api.patch<ApiResponse<Medicine>>(`/medicines/${id}/stock`, data);
   return response.data;
 }
 

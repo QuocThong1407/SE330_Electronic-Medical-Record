@@ -187,7 +187,6 @@ function DepartmentFormModal({
 
           <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-3 mt-4">
             <label className="relative flex cursor-pointer items-center gap-3">
-              {/* Vùng chứa ô Checkbox và Dấu Tick định vị tuyệt đối */}
               <div className="relative flex h-5 w-5 shrink-0 items-center justify-center">
                 <input
                   id="active"
@@ -198,7 +197,6 @@ function DepartmentFormModal({
                   className="peer h-5 w-5 appearance-none rounded-md border border-slate-300 bg-white transition-all checked:border-slate-500 checked:ring-4 checked:ring-brand-100 outline-none"
                 />
                 
-                {/* Icon Dấu Tick màu đen và không có background */}
                 <svg
                   viewBox="0 0 24 24"
                   className="pointer-events-none absolute h-3.5 w-3.5 fill-none stroke-slate-950 opacity-0 transition-opacity duration-200 peer-checked:opacity-100"
@@ -210,7 +208,6 @@ function DepartmentFormModal({
                 </svg>
               </div>
 
-              {/* Nhãn chữ bên cạnh */}
               <span className="text-sm font-medium text-slate-700 select-none peer-checked:text-slate-900">
                 Active Department
               </span>
@@ -763,7 +760,7 @@ export function DepartmentsPage() {
                           className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-indigo-600"
                           title="Edit department"
                         >
-                          <AppIcon name="profile" className="h-4 w-4" />
+                          <AppIcon name="edit" className="h-[14px] w-[14px]" />
                         </button>
                         <button
                           onClick={() => handleDeleteDepartment(department.id)}

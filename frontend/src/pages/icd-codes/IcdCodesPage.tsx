@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AppIcon } from "../../components/AppIcon";
-import { createIcdCode, searchIcdCodes } from "../../services/clinicalService";
+import { createIcdCode, deleteIcdCode, searchIcdCodes, updateIcdCode } from "../../services/clinicalService";
 import type { IcdCode } from "../../types/clinical";
 
 type FormState = {
@@ -16,6 +16,7 @@ export function IcdCodesPage() {
   const [codes, setCodes] = useState<IcdCode[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>({
     id: "",
@@ -52,25 +53,66 @@ export function IcdCodesPage() {
   }, [keyword, selectedCategory]);
 
   const handleCreate = async () => {
-    if (!form.id.trim() || !form.name.trim()) {
+    if (!form.name.trim() || (!editingId && !form.id.trim())) {
       alert("ICD id and name are required.");
       return;
     }
 
     setSaving(true);
     try {
-      await createIcdCode({
-        id: form.id.trim(),
-        name: form.name.trim(),
-        category: form.category.trim() || null,
-        description: form.description.trim() || null,
-      });
+      if (editingId) {
+        await updateIcdCode(editingId, {
+          name: form.name.trim(),
+          category: form.category.trim() || null,
+          description: form.description.trim() || null,
+        });
+      } else {
+        await createIcdCode({
+          id: form.id.trim(),
+          name: form.name.trim(),
+          category: form.category.trim() || null,
+          description: form.description.trim() || null,
+        });
+      }
       setForm({ id: "", name: "", category: "", description: "" });
+      setEditingId(null);
       const data = await searchIcdCodes(keyword.trim() || undefined, selectedCategory || undefined);
       setCodes(data);
     } catch (saveError: any) {
       console.error(saveError);
-      alert(saveError?.response?.data?.message || saveError?.message || "Could not create ICD code.");
+      alert(saveError?.response?.data?.message || saveError?.message || "Could not save ICD code.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleEdit = (item: IcdCode) => {
+    setEditingId(item.id);
+    setForm({
+      id: item.id,
+      name: item.name,
+      category: item.category || "",
+      description: item.description || "",
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleDelete = async (item: IcdCode) => {
+    const confirmed = window.confirm(`Delete ICD code ${item.id}?`);
+    if (!confirmed) return;
+
+    setSaving(true);
+    try {
+      await deleteIcdCode(item.id);
+      const data = await searchIcdCodes(keyword.trim() || undefined, selectedCategory || undefined);
+      setCodes(data);
+      if (editingId === item.id) {
+        setEditingId(null);
+        setForm({ id: "", name: "", category: "", description: "" });
+      }
+    } catch (deleteError: any) {
+      console.error(deleteError);
+      alert(deleteError?.response?.data?.message || deleteError?.message || "Could not delete ICD code.");
     } finally {
       setSaving(false);
     }
@@ -102,13 +144,28 @@ export function IcdCodesPage() {
 
       <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h3 className="text-lg font-semibold text-slate-900">Create ICD code</h3>
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="text-lg font-semibold text-slate-900">{editingId ? "Edit ICD code" : "Create ICD code"}</h3>
+            {editingId ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setEditingId(null);
+                  setForm({ id: "", name: "", category: "", description: "" });
+                }}
+                className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+              >
+                Cancel edit
+              </button>
+            ) : null}
+          </div>
           <div className="mt-4 grid gap-3">
             <input
               value={form.id}
               onChange={(e) => setForm((prev) => ({ ...prev, id: e.target.value }))}
               placeholder="Code id, e.g. I10"
-              className="h-11 rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm outline-none"
+              disabled={editingId !== null}
+              className="h-11 rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm outline-none disabled:cursor-not-allowed disabled:bg-slate-100"
             />
             <input
               value={form.name}
@@ -135,7 +192,7 @@ export function IcdCodesPage() {
               disabled={saving}
               className="h-11 rounded-xl bg-brand-700 px-4 text-sm font-semibold text-white hover:bg-brand-800 disabled:cursor-not-allowed disabled:opacity-70"
             >
-              Create code
+              {editingId ? "Save changes" : "Create code"}
             </button>
           </div>
         </div>
@@ -161,7 +218,7 @@ export function IcdCodesPage() {
           </div>
           {error ? <div className="mt-2 text-sm text-red-600">{error}</div> : null}
 
-          <div className="mt-4 max-h-[38rem] space-y-3 overflow-auto pr-1">
+          <div className="mt-4 max-h-[28rem] space-y-3 overflow-auto pr-1">
             {codes.length === 0 ? (
               <div className="rounded-xl bg-slate-50 px-4 py-6 text-sm text-slate-500">No ICD codes found.</div>
             ) : (
@@ -177,6 +234,23 @@ export function IcdCodesPage() {
                     </span>
                   </div>
                   <div className="mt-2 text-sm text-slate-500">{item.description || "No description"}</div>
+                  <div className="mt-3 flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleEdit(item)}
+                      className="rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 ring-1 ring-inset ring-slate-200 hover:bg-slate-50"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(item)}
+                      disabled={saving}
+                      className="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-70"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               ))
             )}
